@@ -9,11 +9,13 @@ export const CURRENCY_FORMATTER = new Intl.NumberFormat("id-ID", {
 
 export async function fetchFromApi<T>(
   path: string,
-  options?: RequestInit
+  options?: RequestInit & { next?: { revalidate?: number } }
 ): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
     ...options,
-    next: { revalidate: 600 },
+    next:
+      options?.next ??
+      (options?.cache === "no-store" ? undefined : { revalidate: 600 }),
     headers: {
       "Content-Type": "application/json",
       ...options?.headers,
@@ -161,7 +163,9 @@ export async function getSliders(): Promise<Slider[]> {
 }
 
 export async function getBrands(): Promise<Brand[]> {
-  const res = await fetchFromApi<{ data: Brand[] }>("/brands");
+  const res = await fetchFromApi<{ data: Brand[] }>("/brands", {
+    cache: "no-store",
+  });
   return res.data;
 }
 

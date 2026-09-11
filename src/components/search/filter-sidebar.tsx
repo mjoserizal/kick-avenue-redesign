@@ -52,14 +52,18 @@ export function FilterSidebar({
     active.sizes.length;
 
   return (
-    <aside className="w-full lg:w-60 lg:shrink-0 lg:sticky lg:top-36 lg:self-start">
-      <div className="flex items-center justify-between gap-2 pb-4 lg:block">
-        <h3 className="font-semibold">Filters</h3>
+    <aside className="w-full lg:sticky lg:top-36 lg:w-72 lg:shrink-0 lg:self-start">
+      <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm lg:p-5">
+      <div className="flex items-center justify-between gap-2 pb-4">
+        <div>
+          <h3 className="text-base font-bold">Filters</h3>
+          <p className="mt-1 text-xs text-neutral-500">Refine your search</p>
+        </div>
         {activeCount > 0 && (
           <button
             type="button"
             onClick={() => onToggle("__clear", "")}
-            className="text-xs text-neutral-500 hover:text-neutral-900 lg:hidden"
+            className="text-xs font-semibold text-neutral-500 hover:text-neutral-900"
           >
             Clear all ({activeCount})
           </button>
@@ -73,7 +77,7 @@ export function FilterSidebar({
             <Chip key={`brand-${b}`} label={b} onRemove={() => onToggle("brands", b)} />
           ))}
           {active.category && (
-            <Chip label={active.category} onRemove={() => onToggle("category", active.category)} />
+            <Chip label={formatFilterLabel(active.category)} onRemove={() => onToggle("category", active.category)} />
           )}
           {active.sex && (
             <Chip label={active.sex === "M" ? "Men" : active.sex === "F" ? "Women" : "Unisex"} onRemove={() => onToggle("sex", active.sex)} />
@@ -89,7 +93,7 @@ export function FilterSidebar({
         {facets.categories.map((cat) => (
           <FilterRow
             key={cat.value}
-            label={cat.label}
+            label={formatFilterLabel(cat.label)}
             count={cat.count}
             active={active.category === cat.value}
             onClick={() => onToggle("category", cat.value)}
@@ -188,8 +192,16 @@ export function FilterSidebar({
           />
         ))}
       </FilterGroup>
+      </div>
     </aside>
   );
+}
+
+function formatFilterLabel(label: string): string {
+  return label
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 }
 
 function FilterGroup({
@@ -204,7 +216,7 @@ function FilterGroup({
   children: React.ReactNode;
 }) {
   return (
-    <div className="border-t border-neutral-200 py-3">
+    <div className="border-t border-neutral-200 py-4 first:border-t-0 first:pt-0 last:pb-0">
       <button
         type="button"
         onClick={onToggle}
@@ -215,7 +227,7 @@ function FilterGroup({
           className={`size-4 transition-transform ${open ? "rotate-180" : ""}`}
         />
       </button>
-      {open && <div className="mt-2.5">{children}</div>}
+      {open && <div className="mt-3 space-y-0.5">{children}</div>}
     </div>
   );
 }
@@ -235,12 +247,12 @@ function FilterRow({
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center justify-between gap-2 rounded-md px-1.5 py-1 text-left text-sm transition-colors hover:bg-neutral-50"
+      className={`flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left text-sm transition-colors hover:bg-neutral-50 ${active ? "bg-neutral-50" : ""}`}
     >
       <span className="flex items-center gap-2">
         <span
-          className={`flex size-3.5 shrink-0 items-center justify-center rounded border transition-colors ${
-            active ? "border-neutral-900 bg-neutral-900" : "border-neutral-300"
+          className={`flex size-4 shrink-0 items-center justify-center rounded border transition-colors ${
+            active ? "border-neutral-900 bg-neutral-900" : "border-neutral-300 bg-white"
           }`}
         >
           {active && (

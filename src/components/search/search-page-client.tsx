@@ -197,7 +197,7 @@ export function SearchPageClient({
         </div>
       )}
 
-      <div className="flex gap-8">
+      <div className="flex items-start gap-6 lg:gap-10">
         {/* Desktop sidebar */}
         <div className="hidden lg:block">
           <FilterSidebar facets={facets} active={active} onToggle={handleToggle} />

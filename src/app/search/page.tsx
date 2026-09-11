@@ -51,6 +51,8 @@ export default async function SearchPage({
   ]);
 
   const resultData = (data as { data?: never[] }).data ?? [];
+  const categoryLabel =
+    facets?.categories.find((item) => item.value === category)?.label ?? category;
 
   return (
     <div className="mx-auto max-w-[1440px] px-4 lg:px-24 py-6 lg:py-8">
@@ -62,7 +64,9 @@ export default async function SearchPage({
           <span>/</span>
           {category && (
             <>
-              <span className="text-neutral-900 font-medium">{category}</span>
+              <span className="text-neutral-900 font-medium">
+                {formatCategoryLabel(categoryLabel)}
+              </span>
               {brands && <span className="text-neutral-400 mx-1">in</span>}
             </>
           )}
@@ -87,4 +91,11 @@ export default async function SearchPage({
       />
     </div>
   );
+}
+
+function formatCategoryLabel(label: string): string {
+  return label
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 }

@@ -33,10 +33,14 @@ function getSliderImage(slider: Slider): string {
   return slider.img_url || landscape?.URL || slider.signed_url || "";
 }
 
+function hasLegacyBannerAsset(slider: Slider): boolean {
+  return /\/slider-images\/[a-f0-9]{32}\.jpg$/i.test(slider.img_url);
+}
+
 function HeroSkeleton() {
   return (
     <div className="mx-auto max-w-[1440px] px-4 lg:px-24 py-4 lg:py-8">
-      <div className="aspect-[16/7] rounded-xl bg-neutral-200 animate-pulse" />
+      <div className="aspect-[16/5] rounded-xl bg-neutral-200 animate-pulse" />
     </div>
   );
 }
@@ -46,7 +50,8 @@ export async function Hero() {
 
   if (!sliders.length) return <HeroSkeleton />;
 
-  const items = sliders.slice(0, 5);
+  const sharpItems = sliders.filter((slider) => !hasLegacyBannerAsset(slider));
+  const items = (sharpItems.length ? sharpItems : sliders).slice(0, 5);
 
   return (
     <section className="mx-auto max-w-[1440px] px-4 lg:px-24 py-4 lg:py-8" aria-hidden="false">
@@ -54,14 +59,17 @@ export async function Hero() {
         <CarouselContent>
           {items.map((slider) => (
             <CarouselItem key={slider.id}>
-              <Link href={getSliderHref(slider)} className="block group">
-                <div className="relative w-full aspect-[16/7] overflow-hidden rounded-xl bg-neutral-100">
+              <Link
+                href={getSliderHref(slider)}
+                className="group block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
+              >
+                <div className="relative w-full aspect-[16/5] overflow-hidden rounded-xl bg-neutral-100 transition-shadow duration-300 group-hover:shadow-md">
                   <Image
                     src={getSliderImage(slider)}
                     alt={slider.name}
                     fill
                     sizes="(max-width: 1440px) 100vw, 1440px"
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="object-contain transition-opacity duration-300 group-hover:opacity-95"
                     priority={slider.order === 1}
                   />
                 </div>

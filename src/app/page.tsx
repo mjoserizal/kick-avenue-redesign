@@ -8,6 +8,11 @@ import {
 } from "@/components/product/product-section";
 import { getFeaturedProducts, getNewArrivals } from "@/lib/api";
 import { WhatsappButton } from "@/components/whatsapp-button";
+import {
+  HomeCategories,
+  HomeShelves,
+} from "@/components/home/home-discovery";
+import { ServiceRail } from "@/components/home/service-rail";
 
 export default function HomePage() {
   return (
@@ -20,7 +25,7 @@ export default function HomePage() {
       <Suspense
         fallback={
           <div className="mx-auto max-w-[1440px] px-4 lg:px-24 py-4 lg:py-8">
-            <div className="aspect-[16/7] animate-pulse rounded-xl bg-neutral-200" />
+            <div className="aspect-[16/5] animate-pulse rounded-xl bg-neutral-200" />
           </div>
         }
       >
@@ -30,6 +35,9 @@ export default function HomePage() {
       <Suspense fallback={<CategoryGridSkeleton />}>
         <CategoryGrid />
       </Suspense>
+
+      <HomeCategories />
+      <ServiceRail />
 
       <Suspense
         fallback={
@@ -51,6 +59,17 @@ export default function HomePage() {
         }
       >
         <NewArrivalsSection />
+      </Suspense>
+
+      <Suspense
+        fallback={
+          <ProductSectionSkeleton
+            title="Curated edits"
+            subtitle="Fresh finds across every corner of the marketplace"
+          />
+        }
+      >
+        <HomeShelves />
       </Suspense>
 
       <Suspense
@@ -135,7 +154,7 @@ async function BrandSection() {
           >
             <div className="relative h-14 w-full">
               <Image
-                src={brand.img_url}
+                src={brand.signed_url || brand.img_url}
                 alt={brand.name}
                 fill
                 sizes="120px"

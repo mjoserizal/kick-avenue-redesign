@@ -19,6 +19,15 @@ export async function CategoryGrid() {
 
   return (
     <section className="mx-auto max-w-[1440px] px-4 lg:px-24 pb-6 lg:pb-10">
+      <div className="mb-4 flex items-end justify-between gap-4">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-neutral-500">Brand focus</p>
+          <h2 className="mt-1 text-xl font-bold tracking-tight lg:text-2xl">Start with a name you trust</h2>
+        </div>
+        <Link href="/search" className="shrink-0 text-sm font-semibold hover:underline">
+          View all →
+        </Link>
+      </div>
       <div className="flex gap-3 lg:gap-5 overflow-x-auto pb-2 lg:pb-0 lg:grid lg:grid-cols-10">
         {popular.map((brand) => (
           <Link
@@ -29,7 +38,7 @@ export async function CategoryGrid() {
             <div className="flex aspect-square w-16 lg:w-full max-w-[96px] items-center justify-center overflow-hidden rounded-xl lg:rounded-2xl bg-neutral-100 p-2 transition-transform duration-200 group-hover:scale-105">
               <div className="relative h-full w-full">
                 <Image
-                  src={brand.img_url}
+                  src={brand.signed_url || brand.img_url}
                   alt={brand.name}
                   fill
                   sizes="96px"
