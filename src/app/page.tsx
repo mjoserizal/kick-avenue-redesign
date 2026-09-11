@@ -1,17 +1,17 @@
 import { Suspense } from "react";
 import Image from "next/image";
 import { Hero } from "@/components/home/hero";
-import { CategoryGrid, CategoryGridSkeleton } from "@/components/home/categories";
+import {
+  CategoryGrid,
+  CategoryGridSkeleton,
+} from "@/components/home/categories";
 import {
   ProductSection,
   ProductSectionSkeleton,
 } from "@/components/product/product-section";
 import { getFeaturedProducts, getNewArrivals } from "@/lib/api";
 import { WhatsappButton } from "@/components/whatsapp-button";
-import {
-  HomeCategories,
-  HomeShelves,
-} from "@/components/home/home-discovery";
+import { HomeCategories, HomeShelves } from "@/components/home/home-discovery";
 import { ServiceRail } from "@/components/home/service-rail";
 
 export default function HomePage() {
@@ -125,8 +125,7 @@ async function BrandSection() {
   const popular = brands
     .filter((b) => b.active === 1 && b.img_url && b.popular_brand)
     .sort(
-      (a, b) =>
-        Number(a.popular_brand ?? 99) - Number(b.popular_brand ?? 99)
+      (a, b) => Number(a.popular_brand ?? 99) - Number(b.popular_brand ?? 99),
     )
     .slice(0, 12);
 

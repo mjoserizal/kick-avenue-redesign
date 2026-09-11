@@ -52,15 +52,20 @@ export default async function SearchPage({
 
   const resultData = (data as { data?: never[] }).data ?? [];
   const categoryLabel =
-    facets?.categories.find((item) => item.value === category)?.label ?? category;
+    facets?.categories.find((item) => item.value === category)?.label ??
+    category;
 
   return (
     <div className="mx-auto max-w-[1440px] px-4 lg:px-24 py-6 lg:py-8">
       {category || brands ? (
         <nav className="mb-6 flex flex-wrap items-center gap-1.5 text-sm text-neutral-500">
-          <Link href="/" className="hover:text-neutral-900">Home</Link>
+          <Link href="/" className="hover:text-neutral-900">
+            Home
+          </Link>
           <span>/</span>
-          <Link href="/search" className="hover:text-neutral-900">Market</Link>
+          <Link href="/search" className="hover:text-neutral-900">
+            Market
+          </Link>
           <span>/</span>
           {category && (
             <>
@@ -74,7 +79,10 @@ export default async function SearchPage({
             <span className="text-neutral-900 font-medium">
               {brands
                 .split(",")
-                .map((slug) => allBrands.find((b) => b.slug === slug)?.name ?? slug)
+                .map(
+                  (slug) =>
+                    allBrands.find((b) => b.slug === slug)?.name ?? slug,
+                )
                 .join(", ")}
             </span>
           )}

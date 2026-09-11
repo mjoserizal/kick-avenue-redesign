@@ -29,7 +29,9 @@ function getSliderHref(slider: Slider): string {
 }
 
 function getSliderImage(slider: Slider): string {
-  const landscape = slider.images?.find((img) => img.orientation === "landscape");
+  const landscape = slider.images?.find(
+    (img) => img.orientation === "landscape",
+  );
   return slider.img_url || landscape?.URL || slider.signed_url || "";
 }
 
@@ -54,7 +56,10 @@ export async function Hero() {
   const items = (sharpItems.length ? sharpItems : sliders).slice(0, 5);
 
   return (
-    <section className="mx-auto max-w-[1440px] px-4 lg:px-24 py-4 lg:py-8" aria-hidden="false">
+    <section
+      className="mx-auto max-w-[1440px] px-4 lg:px-24 py-4 lg:py-8"
+      aria-hidden="false"
+    >
       <Carousel className="w-full rounded-xl" opts={{ loop: true }}>
         <CarouselContent>
           {items.map((slider) => (

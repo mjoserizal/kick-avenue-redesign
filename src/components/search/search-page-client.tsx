@@ -55,7 +55,16 @@ export function SearchPageClient({
     const params = new URLSearchParams(sp.toString());
     Object.entries(changes).forEach(([key, value]) => {
       if (key === "__clear") {
-        for (const k of ["brands", "category", "sex", "shipping", "sizes", "sort_by", "page", "q"]) {
+        for (const k of [
+          "brands",
+          "category",
+          "sex",
+          "shipping",
+          "sizes",
+          "sort_by",
+          "page",
+          "q",
+        ]) {
           params.delete(k);
         }
       } else if (value === "") {
@@ -106,7 +115,11 @@ export function SearchPageClient({
   const sort = initialSort || "most_popular";
 
   const activeCount =
-    active.brands.length + (active.category ? 1 : 0) + (active.sex ? 1 : 0) + (active.shipping ? 1 : 0) + active.sizes.length;
+    active.brands.length +
+    (active.category ? 1 : 0) +
+    (active.sex ? 1 : 0) +
+    (active.shipping ? 1 : 0) +
+    active.sizes.length;
 
   return (
     <div>
@@ -122,7 +135,12 @@ export function SearchPageClient({
             onChange={(e) => setQuery(e.target.value)}
             className="h-auto flex-1 border-none bg-transparent p-0 shadow-none focus-visible:ring-0"
           />
-          <Button type="submit" size="sm" className="shrink-0" disabled={isPending}>
+          <Button
+            type="submit"
+            size="sm"
+            className="shrink-0"
+            disabled={isPending}
+          >
             Search
           </Button>
         </div>
@@ -132,9 +150,7 @@ export function SearchPageClient({
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-lg font-semibold">
           {initialQuery ? (
-            <>
-              Results for &ldquo;{initialQuery}&rdquo;
-            </>
+            <>Results for &ldquo;{initialQuery}&rdquo;</>
           ) : (
             "All Products"
           )}{" "}
@@ -172,26 +188,53 @@ export function SearchPageClient({
       {activeCount > 0 && (
         <div className="mb-5 hidden flex-wrap gap-1.5 lg:flex">
           {active.brands.map((b) => (
-            <button key={`b-${b}`} type="button" onClick={() => handleToggle("brands", b)} className="inline-flex items-center gap-1 rounded-full border border-neutral-300 bg-white px-2.5 py-0.5 text-xs font-medium hover:border-neutral-900">
+            <button
+              key={`b-${b}`}
+              type="button"
+              onClick={() => handleToggle("brands", b)}
+              className="inline-flex items-center gap-1 rounded-full border border-neutral-300 bg-white px-2.5 py-0.5 text-xs font-medium hover:border-neutral-900"
+            >
               {b} <X className="size-3" />
             </button>
           ))}
           {active.category && (
-            <button type="button" onClick={() => handleToggle("category", active.category)} className="inline-flex items-center gap-1 rounded-full border border-neutral-300 bg-white px-2.5 py-0.5 text-xs font-medium hover:border-neutral-900">
+            <button
+              type="button"
+              onClick={() => handleToggle("category", active.category)}
+              className="inline-flex items-center gap-1 rounded-full border border-neutral-300 bg-white px-2.5 py-0.5 text-xs font-medium hover:border-neutral-900"
+            >
               {active.category} <X className="size-3" />
             </button>
           )}
           {active.sex && (
-            <button type="button" onClick={() => handleToggle("sex", active.sex)} className="inline-flex items-center gap-1 rounded-full border border-neutral-300 bg-white px-2.5 py-0.5 text-xs font-medium hover:border-neutral-900">
-              {active.sex === "M" ? "Men" : active.sex === "F" ? "Women" : "Unisex"} <X className="size-3" />
+            <button
+              type="button"
+              onClick={() => handleToggle("sex", active.sex)}
+              className="inline-flex items-center gap-1 rounded-full border border-neutral-300 bg-white px-2.5 py-0.5 text-xs font-medium hover:border-neutral-900"
+            >
+              {active.sex === "M"
+                ? "Men"
+                : active.sex === "F"
+                  ? "Women"
+                  : "Unisex"}{" "}
+              <X className="size-3" />
             </button>
           )}
           {active.sizes.map((s) => (
-            <button key={`s-${s}`} type="button" onClick={() => handleToggle("sizes", s)} className="inline-flex items-center gap-1 rounded-full border border-neutral-300 bg-white px-2.5 py-0.5 text-xs font-medium hover:border-neutral-900">
+            <button
+              key={`s-${s}`}
+              type="button"
+              onClick={() => handleToggle("sizes", s)}
+              className="inline-flex items-center gap-1 rounded-full border border-neutral-300 bg-white px-2.5 py-0.5 text-xs font-medium hover:border-neutral-900"
+            >
               Size {s} <X className="size-3" />
             </button>
           ))}
-          <button type="button" onClick={() => handleToggle("__clear", "")} className="text-xs text-neutral-500 hover:text-neutral-900 underline">
+          <button
+            type="button"
+            onClick={() => handleToggle("__clear", "")}
+            className="text-xs text-neutral-500 hover:text-neutral-900 underline"
+          >
             Clear all
           </button>
         </div>
@@ -200,22 +243,41 @@ export function SearchPageClient({
       <div className="flex items-start gap-6 lg:gap-10">
         {/* Desktop sidebar */}
         <div className="hidden lg:block">
-          <FilterSidebar facets={facets} active={active} onToggle={handleToggle} />
+          <FilterSidebar
+            facets={facets}
+            active={active}
+            onToggle={handleToggle}
+          />
         </div>
 
         {/* Mobile filter overlay */}
         {mobileFilterOpen && (
           <div className="fixed inset-0 z-50 lg:hidden">
-            <div className="absolute inset-0 bg-black/40" onClick={() => setMobileFilterOpen(false)} />
+            <div
+              className="absolute inset-0 bg-black/40"
+              onClick={() => setMobileFilterOpen(false)}
+            />
             <div className="absolute left-0 top-0 bottom-0 w-80 max-w-[85vw] overflow-y-auto bg-white p-5 shadow-xl">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="font-semibold">Filters</h2>
-                <button type="button" onClick={() => setMobileFilterOpen(false)}>
+                <button
+                  type="button"
+                  onClick={() => setMobileFilterOpen(false)}
+                >
                   <X className="size-5" />
                 </button>
               </div>
-              <FilterSidebar facets={facets} active={active} onToggle={(k, v) => { handleToggle(k, v); }} />
-              <Button className="mt-4 w-full" onClick={() => setMobileFilterOpen(false)}>
+              <FilterSidebar
+                facets={facets}
+                active={active}
+                onToggle={(k, v) => {
+                  handleToggle(k, v);
+                }}
+              />
+              <Button
+                className="mt-4 w-full"
+                onClick={() => setMobileFilterOpen(false)}
+              >
                 Apply
               </Button>
             </div>
@@ -227,10 +289,14 @@ export function SearchPageClient({
           {initialResults.length === 0 ? (
             <div className="py-24 text-center">
               <p className="text-lg font-semibold">No products found</p>
-              <p className="mt-1 text-sm text-neutral-500">Try a different keyword or filter.</p>
+              <p className="mt-1 text-sm text-neutral-500">
+                Try a different keyword or filter.
+              </p>
             </div>
           ) : (
-            <div className={`grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 ${isPending ? "opacity-50 transition-opacity" : ""}`}>
+            <div
+              className={`grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 ${isPending ? "opacity-50 transition-opacity" : ""}`}
+            >
               {initialResults.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
@@ -239,11 +305,23 @@ export function SearchPageClient({
 
           {/* Pagination */}
           <div className="mt-10 flex items-center justify-center gap-2">
-            <Button variant="outline" size="sm" disabled={initialPage <= 1 || isPending} onClick={() => goToPage(initialPage - 1)}>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={initialPage <= 1 || isPending}
+              onClick={() => goToPage(initialPage - 1)}
+            >
               Previous
             </Button>
-            <span className="px-3 text-sm text-neutral-500">Page {initialPage}</span>
-            <Button variant="outline" size="sm" disabled={initialResults.length < 20 || isPending} onClick={() => goToPage(initialPage + 1)}>
+            <span className="px-3 text-sm text-neutral-500">
+              Page {initialPage}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={initialResults.length < 20 || isPending}
+              onClick={() => goToPage(initialPage + 1)}
+            >
               Next
             </Button>
           </div>

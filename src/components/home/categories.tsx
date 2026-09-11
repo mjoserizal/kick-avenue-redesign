@@ -7,8 +7,7 @@ function getPopularBrands(brands: Brand[]) {
   return brands
     .filter((b) => b.active === 1 && b.img_url && b.popular_brand)
     .sort(
-      (a, b) =>
-        Number(a.popular_brand ?? 99) - Number(b.popular_brand ?? 99)
+      (a, b) => Number(a.popular_brand ?? 99) - Number(b.popular_brand ?? 99),
     )
     .slice(0, 10);
 }
@@ -21,10 +20,17 @@ export async function CategoryGrid() {
     <section className="mx-auto max-w-[1440px] px-4 lg:px-24 pb-6 lg:pb-10">
       <div className="mb-4 flex items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-neutral-500">Brand focus</p>
-          <h2 className="mt-1 text-xl font-bold tracking-tight lg:text-2xl">Start with a name you trust</h2>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-neutral-500">
+            Brand focus
+          </p>
+          <h2 className="mt-1 text-xl font-bold tracking-tight lg:text-2xl">
+            Start with a name you trust
+          </h2>
         </div>
-        <Link href="/search" className="shrink-0 text-sm font-semibold hover:underline">
+        <Link
+          href="/search"
+          className="shrink-0 text-sm font-semibold hover:underline"
+        >
           View all →
         </Link>
       </div>
@@ -61,10 +67,7 @@ export function CategoryGridSkeleton() {
     <div className="mx-auto max-w-[1440px] px-4 lg:px-24 pb-6 lg:pb-10">
       <div className="flex gap-3 lg:gap-5 overflow-hidden">
         {Array.from({ length: 10 }).map((_, i) => (
-          <div
-            key={i}
-            className="flex shrink-0 flex-col items-center gap-1.5"
-          >
+          <div key={i} className="flex shrink-0 flex-col items-center gap-1.5">
             <div className="aspect-square w-16 lg:w-[96px] animate-pulse rounded-xl bg-neutral-200" />
             <div className="h-3 w-14 animate-pulse rounded bg-neutral-200 lg:h-4" />
           </div>

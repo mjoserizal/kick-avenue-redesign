@@ -9,7 +9,7 @@ export const CURRENCY_FORMATTER = new Intl.NumberFormat("id-ID", {
 
 export async function fetchFromApi<T>(
   path: string,
-  options?: RequestInit & { next?: { revalidate?: number } }
+  options?: RequestInit & { next?: { revalidate?: number } },
 ): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
     ...options,
@@ -170,15 +170,15 @@ export async function getBrands(): Promise<Brand[]> {
 }
 
 export async function getAggregates(
-  params: Record<string, string | number> = {}
+  params: Record<string, string | number> = {},
 ): Promise<Aggregates["facets"]> {
   const query = new URLSearchParams(
     Object.entries(params)
       .filter(([, v]) => v !== "" && v !== undefined)
-      .map(([k, v]) => [k, String(v)])
+      .map(([k, v]) => [k, String(v)]),
   ).toString();
   const res = await fetchFromApi<{ data: Aggregates }>(
-    `/search/aggregates?availables=true&${query}`
+    `/search/aggregates?availables=true&${query}`,
   );
   return res.data.facets;
 }
@@ -191,12 +191,12 @@ export async function getWebSubnav(): Promise<SubNavItem[]> {
 }
 
 export async function getSearchResults(
-  params: Record<string, string | number | boolean> = {}
+  params: Record<string, string | number | boolean> = {},
 ) {
   const query = new URLSearchParams(
     Object.entries(params)
       .filter(([, v]) => v !== "" && v !== undefined)
-      .map(([k, v]) => [k, String(v)])
+      .map(([k, v]) => [k, String(v)]),
   ).toString();
   const res = await fetchFromApi<SearchResponse>(`/search?${query}`);
   return res.data;
@@ -298,12 +298,19 @@ export interface ProductAvailable {
   pre_verified: boolean;
   status: string;
   is_expired: boolean;
-  size?: { id: number; US?: string; EUR?: string; UK?: string; cm?: string; sex?: string };
+  size?: {
+    id: number;
+    US?: string;
+    EUR?: string;
+    UK?: string;
+    cm?: string;
+    sex?: string;
+  };
 }
 
 export async function getProductDetail(slug: string): Promise<ProductDetail> {
   const res = await fetchFromApi<{ data: ProductDetail }>(
-    `/products/${encodeURIComponent(slug)}`
+    `/products/${encodeURIComponent(slug)}`,
   );
   return res.data;
 }
