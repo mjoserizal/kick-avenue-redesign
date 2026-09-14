@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Search,
   Menu,
@@ -12,16 +12,19 @@ import {
   Truck,
   RotateCcw,
   Sparkles,
+  Globe,
 } from "lucide-react";
+import { cn } from "cn";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
-
-const announcements = [
-  { icon: ShieldCheck, text: "100% Authentic. Guaranteed." },
-  { icon: Truck, text: "Express shipping available" },
-  { icon: RotateCcw, text: "Free 7-day returns" },
-];
+import {
+  appLangs,
+  getT,
+  loadStoredLang,
+  storeLang,
+  type AppLang,
+} from "@/lib/i18n";
 
 export function KickAvenueLogo({ className }: { className?: string }) {
   return (
@@ -36,7 +39,10 @@ export function KickAvenueLogo({ className }: { className?: string }) {
         d="M3.82 11.3005H9.10765L7.72706 17.7858H10.5141L19.0576 11.3005H26.3247L14.5253 19.8958L23.5894 28.6735H15.9318L9.49823 22.0058H6.84176L5.40941 28.6741H0.121765L3.82 11.3005Z"
         fill="currentColor"
       />
-      <path d="M27.7571 11.3005H33.0447L29.3459 28.6735H24.0588L27.7571 11.3005Z" fill="currentColor" />
+      <path
+        d="M27.7571 11.3005H33.0447L29.3459 28.6735H24.0588L27.7571 11.3005Z"
+        fill="currentColor"
+      />
       <path
         d="M55.0541 22.1358C54.4812 24.8705 54.1947 25.6782 53.5694 26.5117C52.4235 28.0488 50.7565 28.6217 47.1618 28.7517C46.3541 28.7776 43.88 28.8041 41.6659 28.8041C36.8212 28.8041 35.2847 28.5699 34.0082 27.6582C33.1747 27.0852 32.7841 26.0694 32.7841 24.5064C32.7841 23.2041 33.2012 20.7558 33.9041 17.9429C34.8159 14.2182 35.91 12.7599 38.4624 11.8482C39.9212 11.327 41.6659 11.1705 45.7818 11.1705C51.0429 11.1705 52.8665 11.2746 54.0124 11.6394C55.5494 12.1341 56.2265 13.0458 56.2265 14.687C56.2265 15.4423 56.1224 16.1458 55.8359 17.3958H50.7829C50.8347 17.057 50.8612 16.8747 50.8612 16.6923C50.8612 15.4941 50.2882 15.3382 46.0424 15.3382C43.2035 15.3382 41.8747 15.3899 41.3018 15.5464C39.9212 15.9111 39.4788 16.5358 38.9318 18.7764C38.4629 20.7817 38.2806 21.8235 38.2806 22.657C38.2806 24.2717 39.0359 24.5841 43.1253 24.5841C47.1106 24.5841 47.7353 24.5323 48.4912 24.2199C49.2988 23.907 49.6629 23.3864 49.95 22.1364H55.0541V22.1358Z"
         fill="currentColor"
@@ -77,7 +83,25 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [lang, setLang] = useState<AppLang>("en");
   const router = useRouter();
+
+  useEffect(() => {
+    const storedLang = loadStoredLang();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- restore persisted language after hydration
+    setLang(storedLang);
+    if (!document.cookie.includes(`ka-lang=${storedLang}`)) {
+      storeLang(storedLang);
+      router.refresh();
+    }
+  }, [router]);
+
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    storeLang(lang);
+  }, [lang]);
+
+  const t = getT(lang);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,6 +113,48 @@ export function Header() {
 
   const navLink =
     "text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-950";
+
+  const announcements = [
+    { icon: ShieldCheck, text: t.announcement1 },
+    { icon: Truck, text: t.announcement2 },
+    { icon: RotateCcw, text: t.announcement3 },
+  ];
+
+  const navItems = [
+    { label: t.navHome, href: "/" },
+    { label: t.navMarket, href: "/search" },
+    { label: t.navSell, href: "/sell" },
+    { label: t.navTrending, href: "/search?sort_by=most_popular" },
+  ];
+
+  const LanguageToggle = (
+    <div
+      className="flex items-center rounded-full border border-neutral-200 p-0.5"
+      role="group"
+      aria-label="Language"
+    >
+      <Globe className="mx-1.5 size-3.5 text-neutral-400" />
+      {appLangs.map((item) => (
+        <button
+          key={item.value}
+          type="button"
+          onClick={() => {
+            setLang(item.value);
+            router.refresh();
+          }}
+          aria-pressed={lang === item.value}
+          className={cn(
+            "rounded-full px-2.5 py-1 text-xs font-bold transition-colors",
+            lang === item.value
+              ? "bg-neutral-950 text-white"
+              : "text-neutral-500 hover:text-neutral-950",
+          )}
+        >
+          {item.label}
+        </button>
+      ))}
+    </div>
+  );
 
   return (
     <>
@@ -109,7 +175,7 @@ export function Header() {
           })}
           <span className="flex items-center gap-1.5 text-[11px] font-medium tracking-wide text-neutral-200 md:hidden">
             <ShieldCheck className="size-3.5 text-brand" />
-            100% Authentic. Guaranteed.
+            {t.announcement1}
           </span>
         </div>
       </div>
@@ -122,7 +188,11 @@ export function Header() {
             aria-label="Toggle menu"
             onClick={() => setMobileOpen(!mobileOpen)}
           >
-            {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+            {mobileOpen ? (
+              <X className="size-5" />
+            ) : (
+              <Menu className="size-5" />
+            )}
           </button>
 
           <Link
@@ -140,7 +210,7 @@ export function Header() {
             <Search className="size-4 shrink-0 text-neutral-500" />
             <Input
               type="text"
-              placeholder="1,000,000+ authentic items here"
+              placeholder={t.searchPlaceholder}
               aria-label="Search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -152,21 +222,15 @@ export function Header() {
             aria-label="Main navigation"
             className="hidden items-center gap-7 xl:flex"
           >
-            <Link href="/" className={navLink}>
-              Home
-            </Link>
-            <Link href="/search" className={navLink}>
-              Market
-            </Link>
-            <Link href="/sell" className={navLink}>
-              Sell
-            </Link>
-            <Link href="/search?sort_by=most_popular" className={navLink}>
-              Trending
-            </Link>
+            {navItems.map((item) => (
+              <Link key={item.href} href={item.href} className={navLink}>
+                {item.label}
+              </Link>
+            ))}
           </nav>
 
           <div className="ml-auto flex items-center gap-1.5 xl:ml-0">
+            <div className="hidden sm:block xl:mr-1">{LanguageToggle}</div>
             <button
               type="button"
               className="flex items-center justify-center rounded-lg p-2 lg:hidden"
@@ -196,7 +260,7 @@ export function Header() {
               className="ml-1 hidden items-center gap-1.5 rounded-full bg-neutral-950 px-4 py-2 text-sm font-semibold text-white transition-transform hover:scale-[1.03] hover:bg-neutral-800 lg:inline-flex"
             >
               <Sparkles className="size-4" />
-              Sell
+              {t.navSell}
             </Link>
           </div>
         </div>
@@ -210,7 +274,7 @@ export function Header() {
               <Search className="size-4 shrink-0 text-neutral-500" />
               <Input
                 type="text"
-                placeholder="1,000,000+ authentic items here"
+                placeholder={t.searchPlaceholder}
                 aria-label="Search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -223,14 +287,11 @@ export function Header() {
         {mobileOpen && (
           <nav className="flex flex-col gap-1 border-t border-neutral-200 bg-white px-4 py-3 lg:hidden">
             {[
-              { label: "Home", href: "/" },
-              { label: "Market", href: "/search" },
-              { label: "Sell", href: "/sell" },
-              { label: "Trending", href: "/search?sort_by=most_popular" },
-              { label: "New Arrivals", href: "/search?sort_by=latest" },
+              ...navItems,
+              { label: t.navNewArrivals, href: "/search?sort_by=latest" },
             ].map((item) => (
               <Link
-                key={item.label}
+                key={item.href}
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
                 className="rounded-lg px-3 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-neutral-950"
@@ -238,6 +299,9 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
+            <div className="mt-2 border-t border-neutral-100 pt-3">
+              {LanguageToggle}
+            </div>
           </nav>
         )}
       </header>

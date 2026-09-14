@@ -3,6 +3,7 @@ import Image from "next/image";
 import { getBrands } from "@/lib/api";
 import type { Brand } from "@/lib/api";
 import { SectionHeading } from "@/components/product/product-section";
+import { getServerT } from "@/lib/server-i18n";
 
 function getPopularBrands(brands: Brand[]) {
   return brands
@@ -16,16 +17,17 @@ function getPopularBrands(brands: Brand[]) {
 export async function CategoryGrid() {
   const brands = await getBrands().catch(() => [] as Brand[]);
   const popular = getPopularBrands(brands);
+  const t = await getServerT();
 
   if (!popular.length) return null;
 
   return (
     <section className="mx-auto max-w-[1440px] px-4 py-8 lg:px-24 lg:py-12">
       <SectionHeading
-        eyebrow="Brand focus"
-        title="Start with a name you trust"
+        eyebrow={t.brandFocus}
+        title={t.startWithTrust}
         linkHref="/search"
-        linkLabel="View all"
+        linkLabel={t.viewAll}
       />
       <div className="flex gap-3 overflow-x-auto pb-1 lg:grid lg:grid-cols-10 lg:gap-4 lg:overflow-visible lg:pb-0">
         {popular.map((brand) => (

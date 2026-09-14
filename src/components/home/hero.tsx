@@ -1,12 +1,4 @@
-import Link from "next/link";
-import Image from "next/image";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
-} from "@/components/ui/carousel";
+import { HeroCarousel } from "@/components/home/hero-carousel";
 import { getSliders } from "@/lib/api";
 import type { Slider } from "@/lib/api";
 
@@ -41,8 +33,8 @@ function hasLegacyBannerAsset(slider: Slider): boolean {
 
 function HeroSkeleton() {
   return (
-    <div className="mx-auto max-w-[1440px] px-4 lg:px-24 py-4 lg:py-8">
-      <div className="aspect-[16/7] rounded-xl bg-neutral-200 animate-pulse lg:aspect-[16/5]" />
+    <div className="mx-auto max-w-[1440px] px-4 py-4 lg:px-24 lg:py-8">
+      <div className="aspect-[16/7] animate-pulse rounded-xl bg-neutral-200 md:aspect-[16/6] lg:aspect-[16/5]" />
     </div>
   );
 }
@@ -53,38 +45,19 @@ export async function Hero() {
   if (!sliders.length) return <HeroSkeleton />;
 
   const sharpItems = sliders.filter((slider) => !hasLegacyBannerAsset(slider));
-  const items = (sharpItems.length ? sharpItems : sliders).slice(0, 5);
+  const items = (sharpItems.length ? sharpItems : sliders)
+    .slice(0, 5)
+    .map((slider) => ({
+      id: slider.id,
+      name: slider.name,
+      href: getSliderHref(slider),
+      image: getSliderImage(slider),
+      order: slider.order,
+    }));
 
   return (
-    <section
-      className="mx-auto max-w-[1440px] px-4 lg:px-24 py-4 lg:py-8"
-      aria-hidden="false"
-    >
-      <Carousel className="w-full rounded-xl" opts={{ loop: true }}>
-        <CarouselContent>
-          {items.map((slider) => (
-            <CarouselItem key={slider.id}>
-              <Link
-                href={getSliderHref(slider)}
-                className="group block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
-              >
-                <div className="relative w-full aspect-[16/7] overflow-hidden rounded-xl bg-neutral-100 transition-shadow duration-300 group-hover:shadow-md lg:aspect-[16/5]">
-                  <Image
-                    src={getSliderImage(slider)}
-                    alt={slider.name}
-                    fill
-                    sizes="(max-width: 1440px) 100vw, 1440px"
-                    className="object-contain transition-opacity duration-300 group-hover:opacity-95"
-                    priority={slider.order === 1}
-                  />
-                </div>
-              </Link>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious className="hidden sm:flex" />
-        <CarouselNext className="hidden sm:flex" />
-      </Carousel>
+    <section className="mx-auto max-w-[1440px] px-4 py-4 lg:px-24 lg:py-8">
+      <HeroCarousel items={items} />
     </section>
   );
 }

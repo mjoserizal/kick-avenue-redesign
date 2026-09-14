@@ -13,7 +13,13 @@ import {
 } from "@/lib/api";
 import type { SearchResult } from "@/lib/api";
 
-export function ProductCard({ product }: { product: SearchResult }) {
+export function ProductCard({
+  product,
+  hasRankingBadge = false,
+}: {
+  product: SearchResult;
+  hasRankingBadge?: boolean;
+}) {
   const [wished, setWished] = useState(false);
   const price = getLowestPrice(product);
   const slashed = getSlashedPrice(product);
@@ -62,13 +68,21 @@ export function ProductCard({ product }: { product: SearchResult }) {
           aria-pressed={wished}
           onClick={() => setWished((w) => !w)}
           className={`absolute right-2.5 top-2.5 z-10 flex size-8 items-center justify-center rounded-full shadow-sm ring-1 ring-black/5 transition-all hover:scale-110 ${
-            wished ? "bg-white text-red-500" : "bg-white/90 text-neutral-700 hover:bg-white"
+            wished
+              ? "bg-white text-red-500"
+              : "bg-white/90 text-neutral-700 hover:bg-white"
           }`}
         >
-          <Heart className={`size-4 transition-transform ${wished ? "scale-110 fill-current" : ""}`} />
+          <Heart
+            className={`size-4 transition-transform ${wished ? "scale-110 fill-current" : ""}`}
+          />
         </button>
 
-        <div className="absolute left-2.5 top-2.5 z-10 flex flex-col items-start gap-1.5">
+        <div
+          className={`absolute left-2.5 z-10 flex flex-col items-start gap-1.5 ${
+            hasRankingBadge ? "top-11" : "top-2.5"
+          }`}
+        >
           {hasDiscount && (
             <Badge className="border-0 bg-red-600 text-white shadow-sm">
               -{discountPct}%

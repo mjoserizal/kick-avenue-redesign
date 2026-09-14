@@ -3,7 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, BadgeCheck } from "lucide-react";
 import { Hero } from "@/components/home/hero";
-import { Top50Banner, Top50BannerSkeleton } from "@/components/home/top50-banner";
+import {
+  Top50Banner,
+  Top50BannerSkeleton,
+} from "@/components/home/top50-banner";
 import {
   CategoryGrid,
   CategoryGridSkeleton,
@@ -21,6 +24,8 @@ import {
 import { WhatsappButton } from "@/components/whatsapp-button";
 import { HomeCategories, HomeShelves } from "@/components/home/home-discovery";
 import { ServiceRail } from "@/components/home/service-rail";
+import { getServerT } from "@/lib/server-i18n";
+import { DownloadApp } from "@/components/home/download-app";
 
 export default function HomePage() {
   return (
@@ -114,6 +119,8 @@ export default function HomePage() {
         <BrandSection />
       </Suspense>
 
+      <DownloadApp />
+
       <WhatsappButton />
     </>
   );
@@ -127,7 +134,8 @@ function HeroFallback() {
   );
 }
 
-function PromoBand() {
+async function PromoBand() {
+  const t = await getServerT();
   return (
     <section className="mx-auto max-w-[1440px] px-4 py-6 lg:px-24 lg:py-8">
       <div className="overflow-hidden rounded-2xl bg-gradient-to-r from-neutral-950 via-neutral-800 to-brand-dark lg:rounded-3xl">
@@ -135,21 +143,20 @@ function PromoBand() {
           <div>
             <p className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.2em] text-brand">
               <BadgeCheck className="size-4" />
-              Marketplace promise
+              {t.marketplacePromise}
             </p>
             <h2 className="max-w-xl text-2xl font-bold leading-tight tracking-tight text-white lg:text-4xl">
-              Buy with confidence. Every single item is verified.
+              {t.verifiedTitle}
             </h2>
             <p className="mt-3 max-w-lg text-sm leading-6 text-neutral-300">
-              Over 1,000,000 authentic products from trusted sellers across
-              sneakers, apparel, luxuries and collectibles.
+              {t.verifiedCopy}
             </p>
           </div>
           <Link
             href="/search"
             className="group inline-flex w-fit items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-neutral-950 transition-colors hover:bg-brand-soft"
           >
-            Shop the marketplace
+            {t.shopMarketplace}
             <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>
         </div>
@@ -160,11 +167,12 @@ function PromoBand() {
 
 async function TrendingSection() {
   const data = await getFeaturedProducts();
+  const t = await getServerT();
   return (
     <ProductSection
-      eyebrow="Hype"
-      title="Trending Now"
-      subtitle="Most popular items right now"
+      eyebrow={t.trendingNow}
+      title={t.trendingNow}
+      subtitle={t.top50Subtitle}
       products={data.data.slice(0, 10)}
       linkHref="/search?sort_by=most_popular"
     />
@@ -179,24 +187,26 @@ async function ExpressShippingSection() {
     sneakers_condition: "pre_verified",
     sort_by: "featured_item_score_desc",
   });
+  const t = await getServerT();
   return (
     <ProductSection
-      title="Express Shipping"
-      subtitle="Ship today before 15.00 WIB"
+      title={t.expressShipping}
+      subtitle={t.expressShippingSubtitle}
       products={data.data}
       linkHref="/search?availables=true&sneakers_condition=pre_verified&sort_by=featured_item_score_desc"
-      linkLabel="View All"
+      linkLabel={t.viewAll}
     />
   );
 }
 
 async function NewArrivalsSection() {
   const data = await getNewArrivals();
+  const t = await getServerT();
   return (
     <ProductSection
-      eyebrow="Fresh drops"
-      title="New Arrivals"
-      subtitle="Fresh drops added recently"
+      eyebrow={t.freshDrops}
+      title={t.newArrivals}
+      subtitle={t.freshDrops}
       products={data.data.slice(0, 10)}
       linkHref="/search?sort_by=latest"
     />
@@ -214,14 +224,15 @@ async function BrandSection() {
     .slice(0, 12);
 
   if (!popular.length) return null;
+  const t = await getServerT();
 
   return (
     <section className="mx-auto max-w-[1440px] px-4 py-6 lg:px-24 lg:py-10">
       <SectionHeading
-        eyebrow="Brands we love"
-        title="Shop by Brand"
+        eyebrow={t.brandsWeLove}
+        title={t.shopByBrand}
         linkHref="/search"
-        linkLabel="See All"
+        linkLabel={t.seeAll}
       />
       <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 lg:gap-4">
         {popular.map((brand) => (

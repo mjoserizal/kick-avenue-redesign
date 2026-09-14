@@ -11,6 +11,7 @@ import {
   ZoomIn,
   ShieldCheck,
   Truck,
+  Zap,
   RotateCcw,
   Banknote,
 } from "lucide-react";
@@ -130,10 +131,55 @@ function groupBySize(listings: ProductAvailable[]) {
   return map;
 }
 
+type SizeInfo = ProductAvailable["size"];
+
+function sizeLabel(size?: SizeInfo): string {
+  return size?.US ?? size?.EUR ?? size?.UK ?? size?.cm ?? "-";
+}
+
+function sizeSub(size?: SizeInfo): string {
+  const parts: string[] = [];
+  if (size?.US) parts.push(`US ${size.US}`);
+  if (size?.UK) parts.push(`UK ${size.UK}`);
+  if (size?.EUR) parts.push(`EU ${size.EUR}`);
+  if (size?.cm) parts.push(`${size.cm} cm`);
+  return parts.join(" · ");
+}
+
+type SizeSystem = "US" | "UK" | "EU";
+
+const sizeSystems: { key: SizeSystem; label: string }[] = [
+  { key: "US", label: "US" },
+  { key: "UK", label: "UK" },
+  { key: "EU", label: "EU" },
+];
+
+function sizeBySystem(size: SizeInfo | undefined, system: SizeSystem): string {
+  const value =
+    system === "US"
+      ? size?.US
+      : system === "UK"
+        ? size?.UK
+        : size?.EUR;
+  return value ?? sizeLabel(size);
+}
+
+function sizeSubForSystem(
+  size: SizeInfo | undefined,
+  system: SizeSystem,
+): string {
+  const parts: string[] = [];
+  if (system !== "US" && size?.US) parts.push(`US ${size.US}`);
+  if (system !== "UK" && size?.UK) parts.push(`UK ${size.UK}`);
+  if (system !== "EU" && size?.EUR) parts.push(`EU ${size.EUR}`);
+  return parts.join(" · ");
+}
+
 type ListingGroupKey = "new" | "used" | "preorder";
 
 export function BuyPanel({ detail }: { detail: ProductDetail }) {
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
+  const [sizeSystem, setSizeSystem] = useState<SizeSystem>("US");
   const [wished, setWished] = useState(false);
 
   const available = detail.availables ?? [];
@@ -173,6 +219,9 @@ export function BuyPanel({ detail }: { detail: ProductDetail }) {
     ? Math.min(...selectedListings.map((l) => parseFloat(l.asking_price)))
     : null;
   const displayPrice = selectedMin ?? price;
+
+  const hasExpress = available.some((l) => l.pre_verified);
+  const expressEta = detail.eta_text_size?.pre_verified;
 
   return (
     <>
@@ -245,6 +294,25 @@ export function BuyPanel({ detail }: { detail: ProductDetail }) {
           </p>
         </motion.div>
 
+        {hasExpress && (
+          <motion.div
+            variants={sectionItem}
+            className="flex items-center gap-3 rounded-2xl border border-amber-300/40 bg-amber-50 p-3.5 text-sm"
+          >
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-neutral-950 text-amber-400">
+              <Zap className="size-4 fill-current" />
+            </span>
+            <div>
+              <p className="font-bold text-neutral-950">
+                Pengiriman Express Tersedia
+              </p>
+              <p className="mt-0.5 text-xs leading-5 text-neutral-600">
+                {expressEta ?? "Stok pre-verified siap dikirim cepat."}
+              </p>
+            </div>
+          </motion.div>
+        )}
+
         {groups.length > 1 && (
           <motion.div
             variants={sectionItem}
@@ -292,12 +360,48 @@ export function BuyPanel({ detail }: { detail: ProductDetail }) {
               {bySize.size} size{bySize.size > 1 ? "s" : ""} available
             </span>
           </div>
+          <div className="mb-3 flex w-fit items-center gap-0.5 rounded-full bg-neutral-100 p-1">
+            {sizeSystems.map((sys) => {
+              const isActive = sizeSystem === sys.key;
+              return (
+                <button
+                  key={sys.key}
+                  type="button"
+                  onClick={() => {
+                    setSizeSystem(sys.key);
+                    setSelectedSize(null);
+                  }}
+                  className="relative z-10 rounded-full px-3.5 py-1.5 text-xs font-semibold"
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="size-system-pill"
+                      className="absolute inset-0 rounded-full bg-neutral-950 shadow-sm"
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 30,
+                      }}
+                    />
+                  )}
+                  <span
+                    className={`relative z-10 transition-colors ${
+                      isActive ? "text-white" : "text-neutral-600"
+                    }`}
+                  >
+                    {sys.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
           <motion.div className="grid grid-cols-4 gap-2 sm:grid-cols-5">
             <AnimatePresence initial={false} mode="popLayout">
               {[...bySize.keys()].map((sizeId) => {
                 const listings = bySize.get(sizeId)!;
                 const first = listings[0];
                 const isSelected = selectedSize === sizeId;
+                const sub = sizeSubForSystem(first.size, sizeSystem);
                 return (
                   <motion.button
                     key={sizeId}
@@ -311,13 +415,24 @@ export function BuyPanel({ detail }: { detail: ProductDetail }) {
                     onClick={() =>
                       setSelectedSize(isSelected ? null : sizeId)
                     }
-                    className={`rounded-xl border px-2 py-2.5 text-center text-sm font-semibold transition-colors ${
+                    className={`rounded-xl border px-2 py-2 text-center transition-colors ${
                       isSelected
                         ? "border-neutral-950 bg-neutral-950 text-white shadow-md"
                         : "border-neutral-300 text-neutral-800 hover:border-neutral-950"
                     }`}
                   >
-                    {first.size?.US ?? first.size?.EUR ?? "-"}
+                    <span className="block text-sm font-semibold">
+                      {sizeBySystem(first.size, sizeSystem)}
+                    </span>
+                    {sub && (
+                      <span
+                        className={`mt-0.5 block truncate text-[10px] font-normal ${
+                          isSelected ? "text-white/70" : "text-neutral-500"
+                        }`}
+                      >
+                        {sub}
+                      </span>
+                    )}
                   </motion.button>
                 );
               })}
@@ -338,7 +453,7 @@ export function BuyPanel({ detail }: { detail: ProductDetail }) {
               <div className="rounded-2xl border border-neutral-200/80 bg-neutral-50/70 p-4 text-xs text-neutral-600">
                 <p className="mb-2.5 flex items-center gap-1.5 font-bold text-neutral-950">
                   <BadgeCheck className="size-4 text-brand-dark" />
-                  Penawaran ukuran {selectedListings[0].size?.US}
+                  Penawaran ukuran {sizeSub(selectedListings[0].size) || selectedListings[0].size?.US}
                 </p>
                 <div className="divide-y divide-neutral-200/70">
                   {selectedListings.slice(0, 4).map((l) => (
@@ -442,13 +557,18 @@ export function BuyPanel({ detail }: { detail: ProductDetail }) {
           className="flex items-start gap-3 rounded-2xl border border-neutral-200/80 bg-white p-4 text-sm text-neutral-700"
         >
           <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-600">
-            <Truck className="size-5" />
+            {hasExpress ? (
+              <Zap className="size-5 fill-current text-amber-500" />
+            ) : (
+              <Truck className="size-5" />
+            )}
           </span>
           <div>
             <p className="font-bold text-neutral-950">Estimasi Pengiriman</p>
             <p className="mt-0.5 leading-5">
-              Pesanan diproses dalam 1x24 jam. Pilih ekspedisi express untuk
-              pengiriman lebih cepat.
+              {expressEta
+                ? `${expressEta} untuk stok pre-verified. Pilih ekspedisi express untuk pengiriman lebih cepat.`
+                : "Pesanan diproses dalam 1x24 jam. Pilih ekspedisi express untuk pengiriman lebih cepat."}
             </p>
           </div>
         </motion.div>

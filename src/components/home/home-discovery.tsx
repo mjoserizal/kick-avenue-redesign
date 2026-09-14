@@ -17,6 +17,7 @@ import {
   ProductSection,
   SectionHeading,
 } from "@/components/product/product-section";
+import { getServerT } from "@/lib/server-i18n";
 
 const categoryCards = [
   {
@@ -98,14 +99,15 @@ async function getShelfProducts(category: string): Promise<SearchResult[]> {
 
 export async function HomeCategories() {
   const facets = await getAggregates().catch(() => null);
+  const t = await getServerT();
 
   return (
     <section className="mx-auto max-w-[1440px] px-4 py-8 lg:px-24 lg:py-14">
       <SectionHeading
-        eyebrow="Find your next"
-        title="Explore by mood"
+        eyebrow={t.exploreByMood}
+        title={t.exploreByMood}
         linkHref="/search"
-        linkLabel="Browse all"
+        linkLabel={t.browseAll}
       />
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4">
         {categoryCards.map((card) => {
@@ -132,7 +134,8 @@ export async function HomeCategories() {
                   {card.name}
                 </strong>
                 <small className="mt-1 block text-xs text-neutral-500">
-                  {count?.toLocaleString("id-ID") ?? "Browse collection"} items
+                  {count?.toLocaleString("id-ID") ?? t.browseCollection}{" "}
+                  {t.items}
                 </small>
               </span>
             </Link>
@@ -150,12 +153,13 @@ export async function HomeShelves() {
   ]);
 
   const fallback = featured.data;
+  const t = await getServerT();
   return (
     <>
       {shelfLinks.map((shelf, index) => (
         <ProductSection
           key={shelf.title}
-          eyebrow="Curated edits"
+          eyebrow={t.curatedEdits}
           title={shelf.title}
           subtitle={shelf.subtitle}
           products={shelves[index].length ? shelves[index] : fallback}

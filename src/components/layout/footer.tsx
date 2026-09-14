@@ -1,11 +1,36 @@
 import Link from "next/link";
 import { ArrowRight, MapPin, Mail, Phone } from "lucide-react";
+import { getServerT } from "@/lib/server-i18n";
 
 const footerLinks = [
-  { title: "Get to Know Us", links: ["About Us", "Careers", "Kick Avenue Newsroom", "Investment"] },
-  { title: "Let Us Help You", links: ["Account", "Order Status", "Payment Options", "Shipping & Delivery", "Returns & Refunds", "Contact Us"] },
-  { title: "For Sellers", links: ["Sell on Kick Avenue", "Seller Central", "Become an Affiliate", "Seller Guidelines"] },
-  { title: "Community", links: ["Community Guidelines", "Kick Avenue Community", "Blog", "Events"] },
+  {
+    title: "Get to Know Us",
+    links: ["About Us", "Careers", "Kick Avenue Newsroom", "Investment"],
+  },
+  {
+    title: "Let Us Help You",
+    links: [
+      "Account",
+      "Order Status",
+      "Payment Options",
+      "Shipping & Delivery",
+      "Returns & Refunds",
+      "Contact Us",
+    ],
+  },
+  {
+    title: "For Sellers",
+    links: [
+      "Sell on Kick Avenue",
+      "Seller Central",
+      "Become an Affiliate",
+      "Seller Guidelines",
+    ],
+  },
+  {
+    title: "Community",
+    links: ["Community Guidelines", "Kick Avenue Community", "Blog", "Events"],
+  },
 ];
 
 const socialLinks = [
@@ -13,7 +38,15 @@ const socialLinks = [
     name: "Instagram",
     href: "https://www.instagram.com/kickavenue",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-5">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="size-5"
+      >
         <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
         <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
         <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
@@ -24,7 +57,15 @@ const socialLinks = [
     name: "Facebook",
     href: "https://www.facebook.com/kickavenue",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-5">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="size-5"
+      >
         <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
       </svg>
     ),
@@ -42,7 +83,15 @@ const socialLinks = [
     name: "YouTube",
     href: "https://www.youtube.com/@kickavenue",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-5">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="size-5"
+      >
         <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
         <path d="m10 15 5-3-5-3z" />
       </svg>
@@ -59,7 +108,9 @@ const socialLinks = [
   },
 ];
 
-export function Footer() {
+export async function Footer() {
+  const t = await getServerT();
+
   return (
     <footer className="border-t border-neutral-200 bg-white">
       {/* Newsletter */}
@@ -67,11 +118,10 @@ export function Footer() {
         <div className="mx-auto grid max-w-[1440px] items-center gap-6 px-4 py-10 lg:grid-cols-2 lg:px-24 lg:py-12">
           <div>
             <h2 className="text-xl font-bold tracking-tight lg:text-2xl">
-              Drop in for the latest drops
+              {t.newArrivals}
             </h2>
             <p className="mt-1.5 text-sm text-neutral-600">
-              New arrivals, restocks and exclusive offers. Straight to your
-              inbox, no spam.
+              {t.freshDrops}. {t.shopMarketplace}.
             </p>
           </div>
           <div className="flex w-full items-center gap-2 rounded-full border border-neutral-300 bg-white py-1.5 pl-4 pr-1.5 transition-colors focus-within:border-neutral-950 focus-within:ring-2 focus-within:ring-neutral-950/10 sm:gap-1 odd:text-neutral-400">
@@ -86,7 +136,7 @@ export function Footer() {
               type="button"
               className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-neutral-950 px-4 text-sm font-semibold text-white transition-colors hover:bg-neutral-800 sm:px-5"
             >
-              Subscribe
+              {t.navNewArrivals}
               <ArrowRight className="hidden size-4 sm:block" />
             </button>
           </div>

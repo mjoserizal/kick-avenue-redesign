@@ -7,9 +7,10 @@ import {
 } from "@/components/product/product-card";
 import { SectionHeading } from "@/components/product/product-section";
 import { getFeaturedProducts } from "@/lib/api";
+import { getServerT } from "@/lib/server-i18n";
 
-const IMAGE_BASE =
-  "https://kickavenue-assets.s3.amazonaws.com/asset-images/homepage";
+const COLLECTION_IMAGE_BASE =
+  "https://kickavenue-assets.s3.amazonaws.com/collections";
 
 const promo = {
   eyebrow: "Under retail",
@@ -20,40 +21,49 @@ const promo = {
 
 const sports = [
   {
+    index: "01",
     title: "Running",
-    href: "/collection/running-sneakers",
-    image: `${IMAGE_BASE}/44cf2064d033f214fc8b0a5f8dba4970.jpg`,
+    slug: "running-sneakers",
+    tagline: "Performance sneakers",
+    image: `${COLLECTION_IMAGE_BASE}/804/90c352cbfd39aa0845f8786a6ef66a97.jpg`,
   },
   {
+    index: "02",
     title: "Court",
-    href: "/collection/tennis-padel",
-    image: `${IMAGE_BASE}/0d848f49732696d3b6a76a0af62fec34.jpg`,
+    slug: "tennis-padel",
+    tagline: "Court sneakers",
+    image: `${COLLECTION_IMAGE_BASE}/809/a18d0c5f11375583dd6f17dedf738733.jpg`,
   },
   {
+    index: "03",
     title: "Basket",
-    href: "/collection/basketball-sneakers",
-    image: `${IMAGE_BASE}/8f29209c59ce1effa520784a8bee6ddd.jpg`,
+    slug: "basketball-sneakers",
+    tagline: "Hoops sneakers",
+    image: `${COLLECTION_IMAGE_BASE}/807/9c1f3f9a346c0a187ff2965e9f6eef3a.jpg`,
   },
   {
+    index: "04",
     title: "Jersey",
-    href: "/collection/sport-jerseys",
-    image: `${IMAGE_BASE}/ae464363354223b98d6fddb86c6e0b07.jpg`,
+    slug: "sport-jerseys",
+    tagline: "Official team kits",
+    image: `${COLLECTION_IMAGE_BASE}/808/d7e4609eddb4903861e21409e6c2524a.jpg`,
   },
 ];
 
 export async function Top50Banner() {
   const data = await getFeaturedProducts().catch(() => null);
   const ranked = data?.data.slice(0, 8) ?? [];
+  const t = await getServerT();
 
   return (
     <>
       <section className="mx-auto max-w-[1440px] px-4 py-6 lg:px-24 lg:py-10">
         <SectionHeading
-          eyebrow="Trending Now"
+          eyebrow={t.trendingNow}
           title="Top 50"
-          subtitle="The most wanted sneakers, ranked right now"
+          subtitle={t.top50Subtitle}
           linkHref="/search?sort_by=most_popular&category=sneakers"
-          linkLabel="See All"
+          linkLabel={t.seeAll}
         />
 
         {ranked.length ? (
@@ -63,7 +73,7 @@ export async function Top50Banner() {
                 <span className="absolute -left-2 -top-2 z-20 flex size-8 items-center justify-center rounded-lg bg-neutral-950 text-sm font-black text-white shadow-sm ring-2 ring-background lg:-left-2.5 lg:-top-2.5 lg:size-9 lg:text-base">
                   {index + 1}
                 </span>
-                <ProductCard product={product} />
+                <ProductCard product={product} hasRankingBadge />
               </div>
             ))}
           </div>
@@ -74,7 +84,7 @@ export async function Top50Banner() {
         <div className="flex flex-col gap-3 lg:gap-5">
           <PromoBand />
 
-          <div className="grid grid-cols-4 gap-3 lg:gap-5">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:gap-5">
             {sports.map((tile) => (
               <SportTile key={tile.title} tile={tile} />
             ))}
@@ -85,7 +95,8 @@ export async function Top50Banner() {
   );
 }
 
-function PromoBand() {
+async function PromoBand() {
+  const t = await getServerT();
   return (
     <Link
       href={promo.href}
@@ -94,7 +105,7 @@ function PromoBand() {
       <div>
         <p className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.2em] text-brand">
           <TicketPercent className="size-4" />
-          {promo.eyebrow}
+          {t.underRetail}
         </p>
         <h3 className="text-3xl font-black tracking-tighter text-white lg:text-5xl">
           {promo.title}
@@ -104,37 +115,45 @@ function PromoBand() {
         </p>
       </div>
       <span className="inline-flex w-fit shrink-0 items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-neutral-950 transition-colors duration-300 group-hover:bg-brand-soft">
-        Shop the drop
+        {t.shopTheDrop}
         <ArrowUpRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
       </span>
     </Link>
   );
 }
 
-function SportTile({
-  tile,
-}: {
-  tile: (typeof sports)[number];
-}) {
+function SportTile({ tile }: { tile: (typeof sports)[number] }) {
   return (
     <Link
-      href={tile.href}
-      className="group flex flex-col items-center gap-2 text-center"
+      href={`/collection/${tile.slug}`}
+      className="group relative flex min-h-44 flex-col justify-between overflow-hidden rounded-2xl bg-neutral-950 p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl lg:min-h-52 lg:rounded-3xl lg:p-7"
     >
-      <div className="flex aspect-square w-full items-center justify-center rounded-2xl border border-neutral-200/80 bg-white p-2 shadow-sm transition-all duration-200 group-hover:-translate-y-1 group-hover:border-neutral-950 group-hover:shadow-md">
-        <div className="relative h-3/4 w-full">
-          <Image
-            src={tile.image}
-            alt={tile.title}
-            fill
-            sizes="(max-width: 1024px) 25vw, 20vw"
-            className="object-contain opacity-80 transition-all duration-300 group-hover:scale-110 group-hover:opacity-100"
-          />
-        </div>
+      <Image
+        src={tile.image}
+        alt={tile.title}
+        fill
+        sizes="(max-width: 640px) 100vw, 50vw"
+        className="object-cover opacity-60 transition-all duration-500 group-hover:scale-105 group-hover:opacity-75"
+      />
+      <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/55 to-neutral-950/15" />
+
+      <div className="relative z-10 flex items-start justify-between">
+        <span className="text-xs font-black tracking-[0.2em] text-brand lg:text-sm">
+          {tile.index}
+        </span>
+        <span className="flex size-8 items-center justify-center rounded-full border border-white/30 text-white transition-all duration-300 group-hover:border-white group-hover:bg-white group-hover:text-neutral-950 lg:size-9">
+          <ArrowUpRight className="size-4" />
+        </span>
       </div>
-      <span className="text-xs font-medium text-neutral-600 transition-colors group-hover:text-neutral-950 lg:text-sm">
-        {tile.title}
-      </span>
+
+      <div className="relative z-10">
+        <h3 className="text-2xl font-black tracking-tight text-white lg:text-4xl">
+          {tile.title}
+        </h3>
+        <p className="mt-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-300 lg:text-sm">
+          {tile.tagline}
+        </p>
+      </div>
     </Link>
   );
 }
@@ -163,11 +182,12 @@ export function Top50BannerSkeleton() {
       <div className="mx-auto max-w-[1440px] px-4 pb-6 lg:px-24 lg:pb-10">
         <div className="flex flex-col gap-3 lg:gap-5">
           <div className="h-40 animate-pulse rounded-2xl bg-neutral-200 lg:h-44 lg:rounded-3xl" />
-          <div className="grid grid-cols-4 gap-3 lg:gap-5">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:gap-5">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="flex flex-col items-center gap-2">
-                <div className="aspect-square w-full animate-pulse rounded-2xl bg-neutral-100" />
-              </div>
+              <div
+                key={i}
+                className="min-h-40 animate-pulse rounded-2xl bg-neutral-100 lg:min-h-48 lg:rounded-3xl"
+              ></div>
             ))}
           </div>
         </div>

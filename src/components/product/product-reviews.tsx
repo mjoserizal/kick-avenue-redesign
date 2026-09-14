@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Star, MessageSquareQuote } from "lucide-react";
+import { Star, MessageSquareQuote, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { ProductReview } from "@/lib/api";
 
@@ -111,7 +111,17 @@ export function ProductReviews({
                 </Badge>
               )}
               {review.shipping_method && (
-                <Badge variant="secondary" className="text-[10px]">
+                <Badge
+                  variant="secondary"
+                  className={
+                    review.shipping_method.toUpperCase() === "EXPRESS"
+                      ? "gap-1 bg-neutral-950 text-[10px] text-white"
+                      : "text-[10px]"
+                  }
+                >
+                  {review.shipping_method.toUpperCase() === "EXPRESS" && (
+                    <Zap className="size-2.5 fill-current text-amber-400" />
+                  )}
                   {review.shipping_method}
                 </Badge>
               )}

@@ -467,3 +467,132 @@ export async function getVariantGroup(
   );
   return res.data;
 }
+
+export interface CollectionImage {
+  id: number;
+  orientation: string;
+  URL: string;
+  signed_url?: string;
+}
+
+export interface CollectionCategory {
+  id: number;
+  name: string;
+  pivot?: {
+    active: boolean;
+    images?: CollectionImage[];
+  };
+}
+
+export interface CollectionProduct {
+  id: number;
+  product_id: number;
+  display_name: string;
+  slug: string;
+  colour: string;
+  weight: number;
+  SKU: string;
+  sex: string;
+  active: boolean;
+  editors_choice: boolean | null;
+  biddable: boolean;
+  details: string | null;
+  price?: number;
+  total_reviews: number;
+  average_rating: number | null;
+  has_express_listing: boolean;
+  latest_price?: { asking_price: string } | null;
+  product: {
+    id: number;
+    brand_id: number;
+    category_id: number;
+    brand: { id: number; name: string };
+    category: { id: number; name: string };
+  };
+  product_variant_images: {
+    id: number;
+    URL: string;
+    position: number;
+    signed_url?: string;
+  }[];
+}
+
+export interface CollectionDetail {
+  id: number;
+  slug: string;
+  name: string;
+  description: string;
+  collection_type: string;
+  ui_template: string;
+  sort_by: string | null;
+  categories: CollectionCategory[];
+  products: {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    data: CollectionProduct[];
+  };
+}
+
+export async function getCollection(
+  slug: string,
+  params: Record<string, string | number> = {},
+): Promise<CollectionDetail> {
+  const query = new URLSearchParams(
+    Object.entries(params)
+      .filter(([, v]) => v !== "" && v !== undefined)
+      .map(([k, v]) => [k, String(v)]),
+  ).toString();
+  const res = await fetchFromApi<{ data: CollectionDetail }>(
+    `/collections/all/${encodeURIComponent(slug)}${query ? `?${query}` : ""}`,
+  );
+  return res.data;
+}
+
+export function collectionProductToSearchResult(
+  product: CollectionProduct,
+): SearchResult {
+  const first = product.product_variant_images?.[0];
+  const asking = product.latest_price?.asking_price
+    ? Number(product.latest_price.asking_price)
+    : NaN;
+  return {
+    id: product.id,
+    product_id: product.product_id,
+    product_name: product.display_name,
+    category_id: product.product.category_id,
+    category: product.product.category?.name ?? "",
+    subcategory: null,
+    brand_ids: [product.product.brand_id],
+    brands: product.product.brand ? [product.product.brand.name] : [],
+    display_name: product.display_name,
+    slug: product.slug,
+    nickname: "",
+    SKU: product.SKU,
+    sex: product.sex,
+    colour: product.colour,
+    weight: product.weight,
+    active: product.active,
+    editors_choice: !!product.editors_choice,
+    biddable: product.biddable,
+    details: product.details ?? "",
+    image_url: first?.signed_url || first?.URL || "",
+    signed_url: "",
+    latest_price: Number.isFinite(asking) ? asking : (product.price ?? undefined),
+    available_sizes: [],
+    average_rating: product.average_rating ?? undefined,
+    has_express_listing: product.has_express_listing,
+  };
+}
+
+export function getCollectionBanner(detail: CollectionDetail): string {
+  const images = detail.categories.flatMap((category) => {
+    if (!category.pivot?.active) return [];
+    return (category.pivot.images ?? []).filter(
+      (img) => img.URL || img.signed_url,
+    );
+  });
+  const first = images[0];
+  return first?.signed_url || first?.URL || "";
+}
