@@ -91,6 +91,8 @@ export function SearchPageClient({
           "shipping",
           "sizes",
           "sort_by",
+          "under_retail",
+          "start_price",
           "page",
           "q",
         ]) {

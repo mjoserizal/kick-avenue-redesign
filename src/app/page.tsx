@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, BadgeCheck } from "lucide-react";
 import { Hero } from "@/components/home/hero";
+import { Top50Banner, Top50BannerSkeleton } from "@/components/home/top50-banner";
 import {
   CategoryGrid,
   CategoryGridSkeleton,
@@ -12,7 +13,11 @@ import {
   ProductSectionSkeleton,
   SectionHeading,
 } from "@/components/product/product-section";
-import { getFeaturedProducts, getNewArrivals } from "@/lib/api";
+import {
+  getFeaturedProducts,
+  getNewArrivals,
+  getSearchResults,
+} from "@/lib/api";
 import { WhatsappButton } from "@/components/whatsapp-button";
 import { HomeCategories, HomeShelves } from "@/components/home/home-discovery";
 import { ServiceRail } from "@/components/home/service-rail";
@@ -27,6 +32,22 @@ export default function HomePage() {
 
       <Suspense fallback={<HeroFallback />}>
         <Hero />
+      </Suspense>
+
+      <Suspense fallback={<Top50BannerSkeleton />}>
+        <Top50Banner />
+      </Suspense>
+
+      <Suspense
+        fallback={
+          <ProductSectionSkeleton
+            title="Express Shipping"
+            subtitle="Ship today before 15.00 WIB"
+            linkLabel="View All"
+          />
+        }
+      >
+        <ExpressShippingSection />
       </Suspense>
 
       <ServiceRail />
@@ -146,6 +167,25 @@ async function TrendingSection() {
       subtitle="Most popular items right now"
       products={data.data.slice(0, 10)}
       linkHref="/search?sort_by=most_popular"
+    />
+  );
+}
+
+async function ExpressShippingSection() {
+  const data = await getSearchResults({
+    page: 1,
+    per_page: 10,
+    availables: true,
+    sneakers_condition: "pre_verified",
+    sort_by: "featured_item_score_desc",
+  });
+  return (
+    <ProductSection
+      title="Express Shipping"
+      subtitle="Ship today before 15.00 WIB"
+      products={data.data}
+      linkHref="/search?availables=true&sneakers_condition=pre_verified&sort_by=featured_item_score_desc"
+      linkLabel="View All"
     />
   );
 }
