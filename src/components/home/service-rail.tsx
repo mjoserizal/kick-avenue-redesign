@@ -1,6 +1,3 @@
-"use client";
-
-import { motion, useReducedMotion } from "framer-motion";
 import { BadgeCheck, Bike, Box, ShieldCheck } from "lucide-react";
 
 const serviceCards = [
@@ -52,30 +49,20 @@ function ServiceCard({
 }
 
 export function ServiceRail() {
-  const reducedMotion = useReducedMotion();
-
   return (
-    <section className="relative w-full overflow-hidden bg-background">
-      <motion.div
-        className="relative flex w-max"
-        animate={reducedMotion ? undefined : { x: ["0%", "-50%"] }}
-        transition={
-          reducedMotion
-            ? undefined
-            : { duration: 28, ease: "linear", repeat: Infinity }
-        }
-      >
+    <section className="relative w-full overflow-hidden bg-background motion-reduce:overflow-x-auto">
+      <div className="flex w-max animate-marquee motion-reduce:animate-none motion-reduce:[animation-play-state:paused]">
         {[0, 1].map((half) => (
           <div
             key={half}
-            className="flex shrink-0 items-stretch gap-3 px-2 py-5 lg:gap-4 lg:px-3"
+            className="flex shrink-0 items-stretch gap-3 px-2 py-5 motion-reduce:mx-auto lg:gap-4 lg:px-3"
           >
             {serviceCards.map((card) => (
               <ServiceCard key={card.title} card={card} />
             ))}
           </div>
         ))}
-      </motion.div>
+      </div>
     </section>
   );
 }

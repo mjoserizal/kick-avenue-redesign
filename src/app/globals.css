@@ -171,6 +171,13 @@
   --animate-floater: floater 6s ease-in-out infinite;
   --animate-fade-up: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-marquee: marquee 24s linear infinite;
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
 
   @keyframes floater {
     0%,
