@@ -42,7 +42,7 @@ function hasLegacyBannerAsset(slider: Slider): boolean {
 function HeroSkeleton() {
   return (
     <div className="mx-auto max-w-[1440px] px-4 lg:px-24 py-4 lg:py-8">
-      <div className="aspect-[16/5] rounded-xl bg-neutral-200 animate-pulse" />
+      <div className="aspect-[16/7] rounded-xl bg-neutral-200 animate-pulse lg:aspect-[16/5]" />
     </div>
   );
 }
@@ -68,7 +68,7 @@ export async function Hero() {
                 href={getSliderHref(slider)}
                 className="group block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
               >
-                <div className="relative w-full aspect-[16/5] overflow-hidden rounded-xl bg-neutral-100 transition-shadow duration-300 group-hover:shadow-md">
+                <div className="relative w-full aspect-[16/7] overflow-hidden rounded-xl bg-neutral-100 transition-shadow duration-300 group-hover:shadow-md lg:aspect-[16/5]">
                   <Image
                     src={getSliderImage(slider)}
                     alt={slider.name}

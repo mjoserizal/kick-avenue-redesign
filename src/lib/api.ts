@@ -324,3 +324,146 @@ export function getDetailLowestPrice(detail: ProductDetail): number | null {
   if (!sources.length) return null;
   return Math.min(...sources.map((s) => parseFloat(s.asking_price)));
 }
+
+export interface ProductReview {
+  id: number;
+  rating: number;
+  review_text: string;
+  display_date: string;
+  shipping_method: string;
+  size: string;
+  condition: string;
+  display_name: string;
+  images?: {
+    original: string;
+    thumb: string;
+    medium: string;
+  }[];
+}
+
+export interface ReviewPreview {
+  reviews: ProductReview[];
+  total_reviews: number;
+}
+
+export async function getProductReviews(
+  productVariantId: number,
+): Promise<ReviewPreview> {
+  const res = await fetchFromApi<{ data: ReviewPreview }>(
+    `/products/${productVariantId}/reviews/preview`,
+  );
+  return res.data;
+}
+
+export interface Recommendation {
+  id: number;
+  product_id: number;
+  display_name: string;
+  slug: string;
+  colour: string;
+  weight: number;
+  SKU: string;
+  sex: string;
+  active: boolean;
+  editors_choice: boolean | null;
+  biddable: boolean;
+  details: string | null;
+  retail_price: string | null;
+  total_reviews: number;
+  average_rating: number | null;
+  price?: number;
+  latest_price?: { asking_price: string } | null;
+  product: {
+    id: number;
+    brand_id: number;
+    category_id: number;
+    brand: { id: number; name: string };
+    category: { id: number; name: string };
+  };
+  product_variant_images: {
+    id: number;
+    product_variant_id: number;
+    URL: string;
+    position: number;
+    signed_url?: string;
+  }[];
+}
+
+export async function getRecommendations(
+  productVariantId: number,
+  params: Record<string, string | number | boolean> = {},
+) {
+  const query = new URLSearchParams(
+    Object.entries(params)
+      .filter(([, v]) => v !== "" && v !== undefined)
+      .map(([k, v]) => [k, String(v)]),
+  ).toString();
+  const res = await fetchFromApi<{
+    data: { current_page: number; total?: number; data: Recommendation[] };
+  }>(`/products/${productVariantId}/recommendation?${query}`);
+  return res.data;
+}
+
+export function recommendationToSearchResult(
+  rec: Recommendation,
+): SearchResult {
+  const first = rec.product_variant_images?.[0];
+  const asking = rec.latest_price
+    ? Number(rec.latest_price.asking_price)
+    : NaN;
+  return {
+    id: rec.id,
+    product_id: rec.product_id,
+    product_name: rec.display_name,
+    category_id: rec.product.category_id,
+    category: rec.product.category?.name ?? "",
+    subcategory: null,
+    brand_ids: [rec.product.brand_id],
+    brands: rec.product.brand ? [rec.product.brand.name] : [],
+    display_name: rec.display_name,
+    slug: rec.slug,
+    nickname: "",
+    SKU: rec.SKU,
+    sex: rec.sex,
+    colour: rec.colour,
+    weight: rec.weight,
+    active: rec.active,
+    editors_choice: !!rec.editors_choice,
+    biddable: rec.biddable,
+    details: rec.details ?? "",
+    image_url: first?.signed_url || first?.URL || "",
+    signed_url: "",
+    latest_price: Number.isFinite(asking) ? asking : (rec.price ?? undefined),
+    available_sizes: [],
+    average_rating: rec.average_rating ?? undefined,
+  };
+}
+
+export interface VariantGroupItem {
+  id: number;
+  display_name: string;
+  slug: string;
+  colour: string;
+  SKU: string;
+  thumbnail: string;
+  is_hot_product: boolean;
+  has_express: boolean;
+}
+
+export interface VariantGroup {
+  group: {
+    id: number;
+    name: string;
+    total_variants: number;
+  };
+  variants: VariantGroupItem[];
+}
+
+export async function getVariantGroup(
+  productVariantId: number,
+): Promise<VariantGroup> {
+  const res = await fetchFromApi<{ data: VariantGroup }>(
+    `/products/${productVariantId}/variant-group`,
+  );
+  return res.data;
+}

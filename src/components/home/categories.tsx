@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getBrands } from "@/lib/api";
 import type { Brand } from "@/lib/api";
+import { SectionHeading } from "@/components/product/product-section";
 
 function getPopularBrands(brands: Brand[]) {
   return brands
@@ -16,43 +17,35 @@ export async function CategoryGrid() {
   const brands = await getBrands().catch(() => [] as Brand[]);
   const popular = getPopularBrands(brands);
 
+  if (!popular.length) return null;
+
   return (
-    <section className="mx-auto max-w-[1440px] px-4 lg:px-24 pb-6 lg:pb-10">
-      <div className="mb-4 flex items-end justify-between gap-4">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-neutral-500">
-            Brand focus
-          </p>
-          <h2 className="mt-1 text-xl font-bold tracking-tight lg:text-2xl">
-            Start with a name you trust
-          </h2>
-        </div>
-        <Link
-          href="/search"
-          className="shrink-0 text-sm font-semibold hover:underline"
-        >
-          View all →
-        </Link>
-      </div>
-      <div className="flex gap-3 lg:gap-5 overflow-x-auto pb-2 lg:pb-0 lg:grid lg:grid-cols-10">
+    <section className="mx-auto max-w-[1440px] px-4 py-8 lg:px-24 lg:py-12">
+      <SectionHeading
+        eyebrow="Brand focus"
+        title="Start with a name you trust"
+        linkHref="/search"
+        linkLabel="View all"
+      />
+      <div className="flex gap-3 overflow-x-auto pb-1 lg:grid lg:grid-cols-10 lg:gap-4 lg:overflow-visible lg:pb-0">
         {popular.map((brand) => (
           <Link
             key={brand.id}
             href={`/search?brands=${brand.slug}`}
-            className="group flex shrink-0 flex-col items-center gap-2 text-center first:pl-4 lg:first:pl-0 last:pr-4 lg:last:pr-0"
+            className="group flex shrink-0 flex-col items-center gap-2.5 text-center first:pl-1 lg:first:pl-0 last:pr-1 lg:last:pr-0"
           >
-            <div className="flex aspect-square w-16 lg:w-full max-w-[96px] items-center justify-center overflow-hidden rounded-xl lg:rounded-2xl bg-neutral-100 p-2 transition-transform duration-200 group-hover:scale-105">
-              <div className="relative h-full w-full">
+            <div className="flex aspect-square w-16 items-center justify-center overflow-hidden rounded-2xl border border-neutral-200/80 bg-white p-3 shadow-sm transition-all duration-200 group-hover:-translate-y-1 group-hover:border-neutral-950 group-hover:shadow-md lg:w-full lg:max-w-[110px]">
+              <div className="relative h-12 w-full">
                 <Image
                   src={brand.signed_url || brand.img_url}
                   alt={brand.name}
                   fill
-                  sizes="96px"
-                  className="object-contain mix-blend-multiply"
+                  sizes="120px"
+                  className="object-contain opacity-80 mix-blend-multiply transition-all duration-300 group-hover:scale-110 group-hover:opacity-100"
                 />
               </div>
             </div>
-            <span className="text-xs lg:text-sm font-medium text-neutral-700 transition-colors group-hover:text-neutral-900">
+            <span className="text-xs font-medium text-neutral-600 transition-colors group-hover:text-neutral-950 lg:text-sm">
               {brand.name}
             </span>
           </Link>
@@ -64,11 +57,11 @@ export async function CategoryGrid() {
 
 export function CategoryGridSkeleton() {
   return (
-    <div className="mx-auto max-w-[1440px] px-4 lg:px-24 pb-6 lg:pb-10">
-      <div className="flex gap-3 lg:gap-5 overflow-hidden">
+    <div className="mx-auto max-w-[1440px] px-4 py-8 lg:px-24 lg:py-12">
+      <div className="flex gap-3 overflow-hidden lg:grid lg:grid-cols-10 lg:gap-4">
         {Array.from({ length: 10 }).map((_, i) => (
-          <div key={i} className="flex shrink-0 flex-col items-center gap-1.5">
-            <div className="aspect-square w-16 lg:w-[96px] animate-pulse rounded-xl bg-neutral-200" />
+          <div key={i} className="flex shrink-0 flex-col items-center gap-2.5">
+            <div className="aspect-square w-16 animate-pulse rounded-2xl bg-neutral-200 lg:w-[110px]" />
             <div className="h-3 w-14 animate-pulse rounded bg-neutral-200 lg:h-4" />
           </div>
         ))}

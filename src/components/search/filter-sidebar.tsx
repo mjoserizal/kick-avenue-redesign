@@ -53,17 +53,17 @@ export function FilterSidebar({
 
   return (
     <aside className="w-full lg:sticky lg:top-36 lg:w-72 lg:shrink-0 lg:self-start">
-      <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm lg:p-5">
+      <div className="rounded-2xl border border-neutral-200/80 bg-white p-4 shadow-sm lg:sticky lg:top-32 lg:p-5">
         <div className="flex items-center justify-between gap-2 pb-4">
           <div>
-            <h3 className="text-base font-bold">Filters</h3>
+            <h3 className="text-base font-bold tracking-tight">Filters</h3>
             <p className="mt-1 text-xs text-neutral-500">Refine your search</p>
           </div>
           {activeCount > 0 && (
             <button
               type="button"
               onClick={() => onToggle("__clear", "")}
-              className="text-xs font-semibold text-neutral-500 hover:text-neutral-900"
+              className="text-xs font-semibold text-neutral-500 hover:text-neutral-950"
             >
               Clear all ({activeCount})
             </button>
@@ -212,8 +212,8 @@ export function FilterSidebar({
                 onClick={() => onToggle("sizes", sz.value)}
                 className={`flex h-8 items-center justify-center rounded-md border px-2.5 text-xs font-medium transition-colors ${
                   active.sizes.includes(sz.value)
-                    ? "border-neutral-900 bg-neutral-900 text-white"
-                    : "border-neutral-300 hover:border-neutral-900"
+                    ? "border-neutral-950 bg-neutral-950 text-white"
+                    : "border-neutral-300 hover:border-neutral-950"
                 }`}
               >
                 {sz.label}
@@ -299,7 +299,7 @@ function FilterRow({
         <span
           className={`flex size-4 shrink-0 items-center justify-center rounded border transition-colors ${
             active
-              ? "border-neutral-900 bg-neutral-900"
+              ? "border-neutral-950 bg-neutral-950"
               : "border-neutral-300 bg-white"
           }`}
         >

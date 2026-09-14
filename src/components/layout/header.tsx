@@ -2,17 +2,33 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { SearchIcon, Menu, X, ShoppingBag, User } from "lucide-react";
+import {
+  Search,
+  Menu,
+  X,
+  ShoppingBag,
+  User,
+  ShieldCheck,
+  Truck,
+  RotateCcw,
+  Sparkles,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 
-export function KickAvenueLogo() {
+const announcements = [
+  { icon: ShieldCheck, text: "100% Authentic. Guaranteed." },
+  { icon: Truck, text: "Express shipping available" },
+  { icon: RotateCcw, text: "Free 7-day returns" },
+];
+
+export function KickAvenueLogo({ className }: { className?: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 227 40"
-      className="w-[180px] h-9 lg:w-[184px] lg:h-8"
+      className={className ?? "w-[178px] h-9 lg:w-[190px] lg:h-8"}
       role="img"
       aria-label="Kick Avenue"
     >
@@ -71,93 +87,160 @@ export function Header() {
     }
   };
 
+  const navLink =
+    "text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-950";
+
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm">
-      <div className="flex items-center gap-3 lg:gap-6 px-3 sm:px-4 lg:px-24 py-3 lg:py-4 max-w-[1440px] mx-auto">
-        <button
-          type="button"
-          className="flex lg:hidden items-center justify-center"
-          aria-label="Toggle menu"
-          onClick={() => setMobileOpen(!mobileOpen)}
-        >
-          {mobileOpen ? <X className="size-6" /> : <Menu className="size-6" />}
-        </button>
-
-        <Link href="/" className="flex items-center shrink-0" aria-label="Kick Avenue Home">
-          <KickAvenueLogo />
-        </Link>
-
-        <form onSubmit={handleSearch} className="hidden lg:flex items-center gap-2 bg-neutral-50 rounded-lg p-3 w-full max-w-md flex-1">
-          <SearchIcon className="size-4 text-neutral-800 shrink-0" />
-          <Input
-            type="text"
-            placeholder="1,000,000+ authentic items here"
-            aria-label="Search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="flex-1 bg-transparent text-sm border-none shadow-none focus-visible:ring-0 h-auto p-0"
-          />
-        </form>
-
-        <nav aria-label="Main navigation" className="hidden lg:flex items-center gap-6 ml-auto">
-          <Link href="/" className="text-sm font-semibold hover:opacity-70 transition-opacity">
-            Home
-          </Link>
-          <Link href="/search" className="text-sm hover:opacity-70 transition-opacity">
-            Market
-          </Link>
-          <Link href="/sell" className="text-sm hover:opacity-70 transition-opacity">
-            Sell
-          </Link>
-        </nav>
-
-        <div className="flex items-center gap-2 sm:gap-3 ml-auto lg:ml-0">
-          <button
-            type="button"
-            className="flex lg:hidden items-center justify-center"
-            aria-label="Toggle search"
-            onClick={() => setSearchOpen(!searchOpen)}
-          >
-            <SearchIcon className="size-6" />
-          </button>
-          <Button variant="ghost" size="icon" aria-label="Wishlist" className="hidden sm:inline-flex">
-            <ShoppingBag className="size-5" />
-          </Button>
-          <Button variant="ghost" size="icon" aria-label="Account" className="hidden sm:inline-flex">
-            <User className="size-5" />
-          </Button>
+    <>
+      {/* Announcement bar */}
+      <div className="bg-neutral-950 text-white">
+        <div className="mx-auto flex max-w-[1440px] items-center justify-center gap-6 px-4 py-2 lg:gap-10 lg:px-24">
+          {announcements.map((item) => {
+            const Icon = item.icon;
+            return (
+              <span
+                key={item.text}
+                className="hidden items-center gap-1.5 text-[11px] font-medium tracking-wide text-neutral-200 md:flex"
+              >
+                <Icon className="size-3.5 text-brand" />
+                {item.text}
+              </span>
+            );
+          })}
+          <span className="flex items-center gap-1.5 text-[11px] font-medium tracking-wide text-neutral-200 md:hidden">
+            <ShieldCheck className="size-3.5 text-brand" />
+            100% Authentic. Guaranteed.
+          </span>
         </div>
       </div>
 
-      {searchOpen && (
-        <form onSubmit={handleSearch} className="lg:hidden px-4 pb-3">
-          <div className="flex items-center gap-2 bg-neutral-50 rounded-lg p-3">
-            <SearchIcon className="size-4 text-neutral-800 shrink-0" />
+      <header className="sticky top-0 z-50 border-b border-neutral-200/80 bg-white/90 backdrop-blur-md">
+        <div className="mx-auto flex max-w-[1440px] items-center gap-3 px-3 py-3 sm:px-4 lg:gap-6 lg:px-24 lg:py-4">
+          <button
+            type="button"
+            className="flex items-center justify-center rounded-lg p-1.5 lg:hidden"
+            aria-label="Toggle menu"
+            onClick={() => setMobileOpen(!mobileOpen)}
+          >
+            {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+
+          <Link
+            href="/"
+            className="flex shrink-0 items-center"
+            aria-label="Kick Avenue Home"
+          >
+            <KickAvenueLogo />
+          </Link>
+
+          <form
+            onSubmit={handleSearch}
+            className="ml-auto hidden w-full max-w-md flex-1 items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50/90 px-4 py-2.5 transition-colors focus-within:border-neutral-900 focus-within:bg-white lg:flex"
+          >
+            <Search className="size-4 shrink-0 text-neutral-500" />
             <Input
               type="text"
               placeholder="1,000,000+ authentic items here"
               aria-label="Search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="flex-1 bg-transparent text-sm border-none shadow-none focus-visible:ring-0 h-auto p-0"
+              className="h-auto flex-1 border-none bg-transparent p-0 text-sm shadow-none focus-visible:ring-0"
             />
-          </div>
-        </form>
-      )}
+          </form>
 
-      {mobileOpen && (
-        <nav className="lg:hidden border-t bg-white px-4 py-4 flex flex-col gap-4">
-          <Link href="/" className="text-sm font-semibold">
-            Home
-          </Link>
-          <Link href="/search" className="text-sm">
-            Market
-          </Link>
-          <Link href="/sell" className="text-sm">
-            Sell
-          </Link>
-        </nav>
-      )}
-    </header>
+          <nav
+            aria-label="Main navigation"
+            className="hidden items-center gap-7 xl:flex"
+          >
+            <Link href="/" className={navLink}>
+              Home
+            </Link>
+            <Link href="/search" className={navLink}>
+              Market
+            </Link>
+            <Link href="/sell" className={navLink}>
+              Sell
+            </Link>
+            <Link href="/search?sort_by=most_popular" className={navLink}>
+              Trending
+            </Link>
+          </nav>
+
+          <div className="ml-auto flex items-center gap-1.5 xl:ml-0">
+            <button
+              type="button"
+              className="flex items-center justify-center rounded-lg p-2 lg:hidden"
+              aria-label="Toggle search"
+              onClick={() => setSearchOpen(!searchOpen)}
+            >
+              <Search className="size-5" />
+            </button>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Wishlist"
+              className="hidden sm:inline-flex"
+            >
+              <ShoppingBag className="size-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Account"
+              className="hidden sm:inline-flex"
+            >
+              <User className="size-5" />
+            </Button>
+            <Link
+              href="/sell"
+              className="ml-1 hidden items-center gap-1.5 rounded-full bg-neutral-950 px-4 py-2 text-sm font-semibold text-white transition-transform hover:scale-[1.03] hover:bg-neutral-800 lg:inline-flex"
+            >
+              <Sparkles className="size-4" />
+              Sell
+            </Link>
+          </div>
+        </div>
+
+        {searchOpen && (
+          <form
+            onSubmit={handleSearch}
+            className="border-t border-neutral-200 px-4 pb-3 pt-3 lg:hidden"
+          >
+            <div className="flex items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50 px-4 py-2.5">
+              <Search className="size-4 shrink-0 text-neutral-500" />
+              <Input
+                type="text"
+                placeholder="1,000,000+ authentic items here"
+                aria-label="Search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="h-auto flex-1 border-none bg-transparent p-0 text-sm shadow-none focus-visible:ring-0"
+              />
+            </div>
+          </form>
+        )}
+
+        {mobileOpen && (
+          <nav className="flex flex-col gap-1 border-t border-neutral-200 bg-white px-4 py-3 lg:hidden">
+            {[
+              { label: "Home", href: "/" },
+              { label: "Market", href: "/search" },
+              { label: "Sell", href: "/sell" },
+              { label: "Trending", href: "/search?sort_by=most_popular" },
+              { label: "New Arrivals", href: "/search?sort_by=latest" },
+            ].map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                onClick={() => setMobileOpen(false)}
+                className="rounded-lg px-3 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-neutral-950"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        )}
+      </header>
+    </>
   );
 }

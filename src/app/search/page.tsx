@@ -58,25 +58,28 @@ export default async function SearchPage({
   return (
     <div className="mx-auto max-w-[1440px] px-4 lg:px-24 py-6 lg:py-8">
       {category || brands ? (
-        <nav className="mb-6 flex flex-wrap items-center gap-1.5 text-sm text-neutral-500">
-          <Link href="/" className="hover:text-neutral-900">
+        <nav className="no-scrollbar mb-6 flex flex-wrap items-center gap-1.5 text-sm text-neutral-500">
+          <Link href="/" className="transition-colors hover:text-neutral-950">
             Home
           </Link>
-          <span>/</span>
-          <Link href="/search" className="hover:text-neutral-900">
+          <span className="text-neutral-300">/</span>
+          <Link
+            href="/search"
+            className="transition-colors hover:text-neutral-950"
+          >
             Market
           </Link>
-          <span>/</span>
+          <span className="text-neutral-300">/</span>
           {category && (
             <>
-              <span className="text-neutral-900 font-medium">
+              <span className="font-medium text-neutral-950">
                 {formatCategoryLabel(categoryLabel)}
               </span>
-              {brands && <span className="text-neutral-400 mx-1">in</span>}
+              {brands && <span className="mx-1 text-neutral-400">in</span>}
             </>
           )}
           {brands && (
-            <span className="text-neutral-900 font-medium">
+            <span className="font-medium text-neutral-950">
               {brands
                 .split(",")
                 .map(

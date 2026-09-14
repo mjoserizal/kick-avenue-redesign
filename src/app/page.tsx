@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowUpRight, BadgeCheck } from "lucide-react";
 import { Hero } from "@/components/home/hero";
 import {
   CategoryGrid,
@@ -8,6 +10,7 @@ import {
 import {
   ProductSection,
   ProductSectionSkeleton,
+  SectionHeading,
 } from "@/components/product/product-section";
 import { getFeaturedProducts, getNewArrivals } from "@/lib/api";
 import { WhatsappButton } from "@/components/whatsapp-button";
@@ -22,26 +25,24 @@ export default function HomePage() {
         Sneakers, Apparel, Luxury &amp; Collectibles
       </h1>
 
-      <Suspense
-        fallback={
-          <div className="mx-auto max-w-[1440px] px-4 lg:px-24 py-4 lg:py-8">
-            <div className="aspect-[16/5] animate-pulse rounded-xl bg-neutral-200" />
-          </div>
-        }
-      >
+      <Suspense fallback={<HeroFallback />}>
         <Hero />
       </Suspense>
+
+      <ServiceRail />
 
       <Suspense fallback={<CategoryGridSkeleton />}>
         <CategoryGrid />
       </Suspense>
 
       <HomeCategories />
-      <ServiceRail />
+
+      <PromoBand />
 
       <Suspense
         fallback={
           <ProductSectionSkeleton
+            eyebrow="Hype"
             title="Trending Now"
             subtitle="Most popular items right now"
           />
@@ -53,6 +54,7 @@ export default function HomePage() {
       <Suspense
         fallback={
           <ProductSectionSkeleton
+            eyebrow="Fresh drops"
             title="New Arrivals"
             subtitle="Fresh drops added recently"
           />
@@ -64,6 +66,7 @@ export default function HomePage() {
       <Suspense
         fallback={
           <ProductSectionSkeleton
+            eyebrow="Curated edits"
             title="Curated edits"
             subtitle="Fresh finds across every corner of the marketplace"
           />
@@ -74,13 +77,13 @@ export default function HomePage() {
 
       <Suspense
         fallback={
-          <div className="mx-auto max-w-[1440px] px-4 lg:px-24 py-6 lg:py-10">
-            <div className="h-7 w-48 animate-pulse rounded bg-neutral-200" />
-            <div className="mt-5 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 lg:gap-5">
+          <div className="mx-auto max-w-[1440px] px-4 py-6 lg:px-24 lg:py-10">
+            <div className="mb-5 h-8 w-48 animate-pulse rounded bg-neutral-200" />
+            <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 lg:gap-5">
               {Array.from({ length: 12 }).map((_, i) => (
                 <div
                   key={i}
-                  className="aspect-square animate-pulse rounded-xl bg-neutral-100"
+                  className="aspect-square animate-pulse rounded-2xl bg-neutral-100"
                 />
               ))}
             </div>
@@ -95,10 +98,50 @@ export default function HomePage() {
   );
 }
 
+function HeroFallback() {
+  return (
+    <div className="mx-auto max-w-[1440px] px-4 py-3 lg:px-24 lg:py-6">
+      <div className="aspect-[16/7] animate-pulse rounded-2xl bg-neutral-200 lg:aspect-[16/5]" />
+    </div>
+  );
+}
+
+function PromoBand() {
+  return (
+    <section className="mx-auto max-w-[1440px] px-4 py-6 lg:px-24 lg:py-8">
+      <div className="overflow-hidden rounded-2xl bg-gradient-to-r from-neutral-950 via-neutral-800 to-brand-dark lg:rounded-3xl">
+        <div className="grid items-center gap-6 px-6 py-8 sm:px-10 lg:grid-cols-[1fr_auto] lg:px-14 lg:py-12">
+          <div>
+            <p className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.2em] text-brand">
+              <BadgeCheck className="size-4" />
+              Marketplace promise
+            </p>
+            <h2 className="max-w-xl text-2xl font-bold leading-tight tracking-tight text-white lg:text-4xl">
+              Buy with confidence. Every single item is verified.
+            </h2>
+            <p className="mt-3 max-w-lg text-sm leading-6 text-neutral-300">
+              Over 1,000,000 authentic products from trusted sellers across
+              sneakers, apparel, luxuries and collectibles.
+            </p>
+          </div>
+          <Link
+            href="/search"
+            className="group inline-flex w-fit items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-neutral-950 transition-colors hover:bg-brand-soft"
+          >
+            Shop the marketplace
+            <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 async function TrendingSection() {
   const data = await getFeaturedProducts();
   return (
     <ProductSection
+      eyebrow="Hype"
       title="Trending Now"
       subtitle="Most popular items right now"
       products={data.data.slice(0, 10)}
@@ -111,6 +154,7 @@ async function NewArrivalsSection() {
   const data = await getNewArrivals();
   return (
     <ProductSection
+      eyebrow="Fresh drops"
       title="New Arrivals"
       subtitle="Fresh drops added recently"
       products={data.data.slice(0, 10)}
@@ -132,32 +176,27 @@ async function BrandSection() {
   if (!popular.length) return null;
 
   return (
-    <section className="mx-auto max-w-[1440px] px-4 lg:px-24 py-6 lg:py-10">
-      <div className="mb-5 flex items-end justify-between">
-        <h2 className="text-lg lg:text-2xl font-bold tracking-tight">
-          Shop by Brand
-        </h2>
-        <a
-          href="/search"
-          className="shrink-0 text-sm font-semibold text-neutral-900 hover:underline"
-        >
-          See All →
-        </a>
-      </div>
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 lg:gap-5">
+    <section className="mx-auto max-w-[1440px] px-4 py-6 lg:px-24 lg:py-10">
+      <SectionHeading
+        eyebrow="Brands we love"
+        title="Shop by Brand"
+        linkHref="/search"
+        linkLabel="See All"
+      />
+      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 lg:gap-4">
         {popular.map((brand) => (
           <a
             key={brand.id}
             href={`/search?brands=${brand.slug}`}
-            className="group flex aspect-square items-center justify-center rounded-xl border border-neutral-200 bg-white p-4 transition-all hover:border-neutral-400 hover:shadow-sm"
+            className="group flex aspect-square items-center justify-center rounded-2xl border border-neutral-200/80 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-neutral-950 hover:shadow-md lg:p-5"
           >
-            <div className="relative h-14 w-full">
+            <div className="relative h-12 w-full lg:h-14">
               <Image
                 src={brand.signed_url || brand.img_url}
                 alt={brand.name}
                 fill
                 sizes="120px"
-                className="object-contain opacity-80 transition-all group-hover:scale-105 group-hover:opacity-100"
+                className="object-contain opacity-80 transition-all duration-300 group-hover:scale-105 group-hover:opacity-100"
               />
             </div>
           </a>

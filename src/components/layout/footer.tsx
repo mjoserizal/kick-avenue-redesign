@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight, MapPin, Mail, Phone } from "lucide-react";
 
 const footerLinks = [
   { title: "Get to Know Us", links: ["About Us", "Careers", "Kick Avenue Newsroom", "Investment"] },
@@ -60,16 +61,52 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-neutral-200 bg-white mt-auto">
-      <div className="mx-auto max-w-[1440px] px-4 lg:px-24 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
+    <footer className="border-t border-neutral-200 bg-white">
+      {/* Newsletter */}
+      <div className="border-b border-neutral-200 bg-neutral-50">
+        <div className="mx-auto grid max-w-[1440px] items-center gap-6 px-4 py-10 lg:grid-cols-2 lg:px-24 lg:py-12">
+          <div>
+            <h2 className="text-xl font-bold tracking-tight lg:text-2xl">
+              Drop in for the latest drops
+            </h2>
+            <p className="mt-1.5 text-sm text-neutral-600">
+              New arrivals, restocks and exclusive offers. Straight to your
+              inbox, no spam.
+            </p>
+          </div>
+          <div className="flex w-full items-center gap-2 rounded-full border border-neutral-300 bg-white py-1.5 pl-4 pr-1.5 transition-colors focus-within:border-neutral-950 focus-within:ring-2 focus-within:ring-neutral-950/10 sm:gap-1 odd:text-neutral-400">
+            <Mail className="size-4 shrink-0 text-neutral-400" />
+            <input
+              type="email"
+              required
+              placeholder="your@email.com"
+              className="h-10 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-neutral-400"
+            />
+            <button
+              type="button"
+              className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-neutral-950 px-4 text-sm font-semibold text-white transition-colors hover:bg-neutral-800 sm:px-5"
+            >
+              Subscribe
+              <ArrowRight className="hidden size-4 sm:block" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-[1440px] px-4 py-12 lg:px-24">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4 lg:grid-cols-6">
           {footerLinks.map((column) => (
             <div key={column.title}>
-              <h3 className="text-sm font-semibold mb-4">{column.title}</h3>
-              <ul className="space-y-2.5">
+              <h3 className="text-sm font-bold tracking-wide text-neutral-950">
+                {column.title}
+              </h3>
+              <ul className="mt-4 space-y-2.5">
                 {column.links.map((link) => (
                   <li key={link}>
-                    <Link href="#" className="text-sm text-neutral-600 hover:text-neutral-900 hover:underline">
+                    <Link
+                      href="#"
+                      className="text-sm text-neutral-500 transition-colors hover:text-neutral-950"
+                    >
                       {link}
                     </Link>
                   </li>
@@ -78,8 +115,10 @@ export function Footer() {
             </div>
           ))}
           <div className="col-span-2 md:col-span-1">
-            <h3 className="text-sm font-semibold mb-4">Follow Us</h3>
-            <div className="flex items-center gap-3">
+            <h3 className="text-sm font-bold tracking-wide text-neutral-950">
+              Follow Us
+            </h3>
+            <div className="mt-4 flex items-center gap-2.5">
               {socialLinks.map((social) => (
                 <Link
                   key={social.name}
@@ -87,27 +126,37 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.name}
-                  className="hover:opacity-70"
+                  className="flex size-9 items-center justify-center rounded-full border border-neutral-200 text-neutral-500 transition-all hover:border-neutral-950 hover:bg-neutral-950 hover:text-white"
                 >
                   {social.icon}
                 </Link>
               ))}
             </div>
+            <ul className="mt-5 space-y-2 text-sm text-neutral-500">
+              <li className="flex items-center gap-2">
+                <MapPin className="size-4 shrink-0 text-neutral-400" />
+                Jakarta, Indonesia
+              </li>
+              <li className="flex items-center gap-2">
+                <Phone className="size-4 shrink-0 text-neutral-400" />
+                +62 812-1000-5425
+              </li>
+            </ul>
           </div>
         </div>
 
-        <div className="border-t border-neutral-200 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-12 flex flex-col gap-4 border-t border-neutral-200 pt-8 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-neutral-500">
             © {new Date().getFullYear()} Kick Avenue. All rights reserved.
           </p>
-          <div className="flex items-center gap-6 text-sm text-neutral-500">
-            <Link href="#" className="hover:text-neutral-900 hover:underline">
+          <div className="flex flex-wrap items-center gap-6 text-sm text-neutral-500">
+            <Link href="#" className="transition-colors hover:text-neutral-950">
               Privacy Policy
             </Link>
-            <Link href="#" className="hover:text-neutral-900 hover:underline">
+            <Link href="#" className="transition-colors hover:text-neutral-950">
               Terms of Service
             </Link>
-            <Link href="#" className="hover:text-neutral-900 hover:underline">
+            <Link href="#" className="transition-colors hover:text-neutral-950">
               Cookies
             </Link>
           </div>

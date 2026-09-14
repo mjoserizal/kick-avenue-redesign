@@ -13,14 +13,37 @@ import {
   getSearchResults,
 } from "@/lib/api";
 import type { SearchResult } from "@/lib/api";
-import { ProductSection } from "@/components/product/product-section";
+import {
+  ProductSection,
+  SectionHeading,
+} from "@/components/product/product-section";
 
 const categoryCards = [
-  { value: "sneakers", name: "Sneakers", icon: Footprints },
-  { value: "trading cards", name: "Trading Cards", icon: CreditCard },
-  { value: "apparels", name: "Apparels", icon: Shirt },
-  { value: "handbags", name: "Handbags", icon: Box },
-  { value: "lifestyles", name: "Lifestyles", icon: Bike },
+  {
+    value: "sneakers",
+    name: "Sneakers",
+    icon: Footprints,
+  },
+  {
+    value: "trading cards",
+    name: "Trading Cards",
+    icon: CreditCard,
+  },
+  {
+    value: "apparels",
+    name: "Apparels",
+    icon: Shirt,
+  },
+  {
+    value: "handbags",
+    name: "Handbags",
+    icon: Box,
+  },
+  {
+    value: "lifestyles",
+    name: "Lifestyles",
+    icon: Bike,
+  },
 ];
 
 const shelfLinks = [
@@ -39,14 +62,14 @@ const shelfLinks = [
   {
     title: "Soccer edit",
     subtitle: "Match-day energy, off the pitch",
-    category: "jersey",
-    href: "/search?category=jersey",
+    category: "apparels",
+    href: "/search?category=apparels",
   },
   {
     title: "Padel and tennis",
     subtitle: "Court-ready from first serve",
-    category: "court",
-    href: "/search?category=court",
+    category: "sneakers",
+    href: "/search?sort_by=most_popular&category=sneakers",
   },
   {
     title: "Apparel picks",
@@ -57,8 +80,8 @@ const shelfLinks = [
   {
     title: "Sport jerseys",
     subtitle: "Wear the moment",
-    category: "jersey",
-    href: "/search?category=jersey",
+    category: "apparels",
+    href: "/search?category=apparels",
   },
 ];
 
@@ -78,23 +101,13 @@ export async function HomeCategories() {
 
   return (
     <section className="mx-auto max-w-[1440px] px-4 py-8 lg:px-24 lg:py-14">
-      <div className="mb-5 flex items-end justify-between gap-4">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-neutral-500">
-            Find your next
-          </p>
-          <h2 className="mt-2 text-2xl font-bold tracking-tight lg:text-4xl">
-            Explore by mood
-          </h2>
-        </div>
-        <Link
-          href="/search"
-          className="inline-flex shrink-0 items-center gap-1 text-sm font-bold hover:underline"
-        >
-          Browse all <ArrowUpRight className="size-4" />
-        </Link>
-      </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+      <SectionHeading
+        eyebrow="Find your next"
+        title="Explore by mood"
+        linkHref="/search"
+        linkLabel="Browse all"
+      />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4">
         {categoryCards.map((card) => {
           const Icon = card.icon;
           const count = facets?.categories.find(
@@ -104,21 +117,24 @@ export async function HomeCategories() {
             <Link
               key={card.name}
               href={`/search?category=${encodeURIComponent(card.value)}`}
-              className="group relative min-h-36 overflow-hidden rounded-2xl border border-neutral-200 bg-white p-4 text-neutral-900 shadow-sm transition-transform duration-200 hover:-translate-y-1 hover:border-neutral-400 hover:shadow-lg"
+              className={`group relative flex min-h-36 flex-col justify-between overflow-hidden rounded-2xl border border-neutral-200/70 bg-gradient-to-br from-neutral-50 to-white p-4 text-neutral-900 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-neutral-950 hover:shadow-lg lg:min-h-44 lg:p-5`}
             >
-              <Icon
-                className="size-7 transition-transform duration-200 group-hover:scale-110"
-                strokeWidth={1.6}
-              />
-              <span className="absolute bottom-4 left-4 right-3">
+              <div className="flex items-start justify-between">
+                <span
+                  className={`flex size-10 items-center justify-center rounded-xl bg-neutral-950 text-white shadow-sm transition-transform duration-200 group-hover:scale-110`}
+                >
+                  <Icon className="size-5" strokeWidth={1.8} />
+                </span>
+                <ArrowUpRight className="size-4 text-neutral-400 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
+              </div>
+              <span className="mt-6">
                 <strong className="block text-base font-bold">
                   {card.name}
                 </strong>
-                <small className="mt-1 block text-xs opacity-65">
+                <small className="mt-1 block text-xs text-neutral-500">
                   {count?.toLocaleString("id-ID") ?? "Browse collection"} items
                 </small>
               </span>
-              <ArrowUpRight className="absolute right-4 top-4 size-4 opacity-50 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
           );
         })}
@@ -139,6 +155,7 @@ export async function HomeShelves() {
       {shelfLinks.map((shelf, index) => (
         <ProductSection
           key={shelf.title}
+          eyebrow="Curated edits"
           title={shelf.title}
           subtitle={shelf.subtitle}
           products={shelves[index].length ? shelves[index] : fallback}
